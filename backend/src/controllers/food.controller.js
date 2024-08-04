@@ -119,13 +119,18 @@ const getAllFoodPosts = asyncHandler(async (req, res) => {
     requestStatusMap[request.foodId.toString()] = request.status;
   });
 
-  const foodsWithStatus = foods.map((food) => {
-    const requestStatus = requestStatusMap[food._id.toString()] || "request";
-    return {
-      food,
-      requestStatus,
-    };
-  });
+  const foodsWithStatus = foods
+    .map((food) => {
+      const requestStatus = requestStatusMap[food._id.toString()] || "request";
+      return {
+        food,
+        requestStatus,
+      };
+    })
+    .filter(
+      ({ requestStatus }) =>
+        requestStatus != "OTP Expired" && requestStatus != "approved"
+    );
 
   res
     .status(200)
