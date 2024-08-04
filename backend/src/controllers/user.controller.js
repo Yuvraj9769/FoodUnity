@@ -1,0 +1,447 @@
+const userModel = require("../models/user.model");
+const ApiResponse = require("../utils/ApiResponse");
+const asyncHandler = require("../utils/asyncHandler");
+const { uploadOnCloudinary } = require("../utils/cloudinary");
+const sendPasswordResetMail = require("../utils/sendMail");
+const axios = require("axios");
+
+const generateAccessTokenForAllTime = async (id, rememberme) => {
+  try {
+    const user = await userModel.findById(id);
+
+    if (!user) {
+      return null;
+    }
+    let accessToken;
+    if (rememberme) {
+      accessToken = user.generateAccessTokenLongTime();
+    } else {
+      accessToken = user.generateAccessTokenShortTime();
+    }
+    return accessToken;
+  } catch (error) {
+    return null;
+  }
+};
+
+const registerUser = asyncHandler(async (req, res) => {
+  const { username, email, fullName, password, mobNo, userType } = req.body;
+
+  if (
+    [username, email, fullName, password, userType].some(
+      (field) => field.trim() === ""
+    )
+  ) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "All fields are required"));
+  }
+
+  if (!mobNo) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Mobile number is required"));
+  }
+
+  const existingUser = await userModel.findOne({
+    $or: [{ username }, { email }],
+  });
+
+  if (existingUser) {
+    if (
+      existingUser.username === username &&
+      existingUser.email === email &&
+      existingUser.fullName === fullName
+    ) {
+      return res.status(409).json(new ApiResponse(409, null, "Please login"));
+    } else if (existingUser.username === username) {
+      return res
+        .status(409)
+        .json(new ApiResponse(409, null, "Username already exists"));
+    } else if (existingUser.email === email) {
+      return res
+        .status(409)
+        .json(new ApiResponse(409, null, "Email already exists"));
+    }
+  }
+
+  const user = await userModel.create({
+    fullName,
+    username,
+    email,
+    mobileNumber: mobNo,
+    password,
+    role: userType,
+  });
+
+  const createdUser = await userModel
+    .findById(user._id)
+    .select("-password -passwordResetToken -passwordResetExpires");
+
+  if (!createdUser) {
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Something went wrong"));
+  }
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, user, "User registered successfully"));
+});
+
+const loginUser = asyncHandler(async (req, res) => {
+  const {
+    email = "email",
+    username = "username",
+    password,
+    rememberme = false,
+  } = req.body;
+
+  if (
+    [email, username, password].some((field) => !field || field.trim() === "")
+  ) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "All fields are required"));
+  }
+
+  const user = await userModel.findOne({
+    $or: [{ email }, { username }],
+  });
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "Please register"));
+  }
+
+  const isMatch = await user.verifyPassword(password);
+
+  if (!isMatch) {
+    return res
+      .status(401)
+      .json(new ApiResponse(401, null, "Incorrect password"));
+  }
+
+  const accessToken = await generateAccessTokenForAllTime(user._id, rememberme);
+
+  if (rememberme) {
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
+    };
+    res.cookie("auth_005_Login-l", accessToken, options);
+  } else {
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day from now
+    };
+    res.cookie("auth_005_Login-s", accessToken, options);
+  }
+
+  if (user.role === "donor") {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user.role, "Login Successfully"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user.role, "Login Successfully"));
+});
+
+const userData = asyncHandler(async (req, res) => {
+  const user = await userModel
+    .findById(req.user._id)
+    .select("-password -passwordResetToken -passwordResetExpires");
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+  return res.status(200).json(new ApiResponse(200, user, "Ok"));
+});
+
+const sendForgetPasswordMail = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await userModel.findOne({ email });
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Please register first"));
+  }
+
+  if (user?.passwordResetToken) {
+    if (user.passwordResetExpires >= Date.now()) {
+      return res
+        .status(409)
+        .json(
+          new ApiResponse(409, null, "Password reset request already sent")
+        );
+    }
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+  }
+
+  const token = await user.generatePasswordResetToken();
+
+  if (!token) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+    return res.status(500).json(new ApiResponse(500, null, "Please try later"));
+  }
+
+  const url = `${process.env.FRONTEND_SERVER}reset-password/${token}`;
+
+  const mailResponse = await sendPasswordResetMail(
+    user?.email,
+    "Password Reset Confirmation",
+    "Hello ",
+    `<p>Hello, <b>${user?.fullName}</b></p>
+    <p>Your password reset request is pending. It will expire in 5 minutes. Please click the button below to proceed:</p>
+      <a href="${url}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Reset Password</a>
+       <p>If you did not request this, please ignore this email.</p>`
+  );
+
+  return res.status(200).json(new ApiResponse(200, null, "Email sent "));
+});
+
+const checkTokenExipry = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+
+  if (!token) {
+    return res.status(400).json(new ApiResponse(400, null, "Unauthorized"));
+  }
+
+  const userWithToken = await userModel.findOne({ passwordResetToken: token });
+
+  if (!userWithToken) {
+    return res.status(410).json(
+      new ApiResponse(410, null, "Password reset link has already been used") //verify it again
+    );
+  }
+
+  if (userWithToken.passwordResetExpires >= Date.now()) {
+    return res.status(200).json(new ApiResponse(200, null, "Ok"));
+  }
+  userWithToken.passwordResetToken = undefined;
+  userWithToken.passwordResetExpires = undefined;
+  await userWithToken.save();
+  return res.status(401).json(new ApiResponse(401, null, "Link expired"));
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+
+  if (!token) {
+    return res.status(400).json(new ApiResponse(400, null, "Unauthorized"));
+  }
+
+  const { username, newPassword } = req.body;
+
+  const user = await userModel.findOne({ username });
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+  if (user.passwordResetExpires < Date.now()) {
+    return res.status(401).json(new ApiResponse(401, null, "Link expired"));
+  }
+
+  user.password = newPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  await sendPasswordResetMail(
+    user?.email,
+    "Password Reset Successful",
+    "Hello ",
+    `<p>Hello, <b>${user?.fullName}</b></p>
+    <p>Your password has been successfully reset. If you did not initiate this action, please contact us immediately at ${process.env.USER}.</p>`
+  );
+
+  return res.status(200).json(new ApiResponse(200, null, "Password reset"));
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+  const { _id, rememberme } = req.user;
+
+  if (!_id) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  const user = await userModel.findById(_id);
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "Lax",
+  };
+
+  if (rememberme) {
+    res.clearCookie("auth_005_Login-l", options);
+  } else {
+    res.clearCookie("auth_005_Login-s", options);
+  }
+  return res.status(200).json(new ApiResponse(200, null, "Logged out"));
+});
+
+const updateProfilePic = asyncHandler(async (req, res) => {
+  const user = await userModel.findById(req.user._id);
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+  const response = await uploadOnCloudinary(req.file.path);
+  if (!response) {
+    return res.status(500).json(new ApiResponse(500, null, "Please try later"));
+  }
+  user.profilePic = response.secure_url;
+  await user.save();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Profile pic updated"));
+});
+
+const updateProfile = asyncHandler(async (req, res) => {
+  const { username, email, fullName, mobNo } = req.body;
+
+  if ([username, email, fullName].some((field) => field.trim() === "")) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "All fields are required"));
+  }
+
+  if (!mobNo) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Mobile number is required"));
+  }
+
+  const user = await userModel.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        fullName: fullName,
+        username: username,
+        email: email,
+        mobileNumber: mobNo,
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, null, "Profile updated"));
+});
+
+const getUserLocation = asyncHandler(async (req, res) => {
+  const { lat, long } = req.body;
+
+  let userLocationData = null;
+
+  try {
+    const response = await axios.get(
+      `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=${process.env.MAP_API_KEY}`
+    );
+
+    const components = response.data.results[0].components;
+    const city =
+      components.suburb ||
+      components.city ||
+      components.town ||
+      components.village ||
+      "City not found";
+
+    userLocationData = city;
+  } catch (error) {
+    console.error("Error : ", error);
+  }
+
+  if (!userLocationData || userLocationData === "City not found")
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Sorry location not found"));
+
+  const user = await userModel.findById(req.user._id);
+
+  if (Object.keys(user.locationCoordinates).length === 0) {
+    user.locationCoordinates = {
+      lat: lat,
+      long: long,
+    };
+
+    await user.save({ validateBeforeSave: false });
+  }
+
+  return res.status(200).json(new ApiResponse(200, userLocationData));
+});
+
+const checkIsLogin = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .json(new ApiResponse(401, null, "You are not logged in"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, null, "Logged In"));
+});
+
+// Sample output : -
+// {
+//   documentation: 'https://opencagedata.com/api',
+//   licenses: [
+//     {
+//       name: 'see attribution guide',
+//       url: 'https://opencagedata.com/credits'
+//     }
+//   ],
+//   rate: { limit: 2500, remaining: 2498, reset: 1719878400 },
+//   results: [
+//     {
+//       annotations: [Object],
+//       bounds: [Object],
+//       components: [Object],
+//       confidence: 9,
+//       distance_from_q: [Object],
+//       formatted: 'Santa Cruz – Chembur Link Road, Zone 5, Mumbai - 400070, Maharashtra, India',
+//       geometry: [Object]
+//     }
+//   ],
+//   status: { code: 200, message: 'OK' },
+//   stay_informed: {
+//     blog: 'https://blog.opencagedata.com',
+//     mastodon: 'https://en.osm.town/@opencage'
+//   },
+//   thanks: 'For using an OpenCage API',
+//   timestamp: {
+//     created_http: 'Mon, 01 Jul 2024 16:27:42 GMT',
+//     created_unix: 1719851262
+//   },
+//   total_results: 1
+// }
+
+module.exports = {
+  registerUser,
+  loginUser,
+  userData,
+  checkTokenExipry,
+  sendForgetPasswordMail,
+  resetPassword,
+  logoutUser,
+  updateProfilePic,
+  updateProfile,
+  getUserLocation,
+  checkIsLogin,
+};

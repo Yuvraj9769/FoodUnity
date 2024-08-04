@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media screen and (max-width: 1050px) {
+  .ul {
+    display: none;
+  }
+
+  .sidebtn {
+    display: block;
+  }
+}
+
+@media screen and (min-width: 1050px) {
+  .ul {
+    display: flex;
+  }
+  .sidebtn {
+    display: none;
+  }
+}
+
+.scroller-display-none-otpPage::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scroller-display-none-otpPage::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 10px;
+}
+
+.scroller-display-none-otpPage {
+  -ms-overflow-style: none;
+}
+
+.scroller-display-none::-webkit-scrollbar {
+  display: none;
+}
