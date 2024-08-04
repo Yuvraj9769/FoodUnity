@@ -60,9 +60,6 @@ const foodSchema = new mongoose.Schema(
     verifyOTP: {
       type: Number,
     },
-    OTPExpiryTime: {
-      type: Date,
-    },
   },
   { timestamps: true }
 );

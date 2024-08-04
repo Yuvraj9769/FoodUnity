@@ -148,7 +148,7 @@ const getDonorsAllNotifications = asyncHandler(async (req, res) => {
 
 const sendRequestResponseMail = asyncHandler(async (req, res) => {
   const { recipientEmail, reqStatus, foodId } = req.body;
-  const { _id, username } = req.user;
+  const { username } = req.user;
 
   if (
     [recipientEmail, reqStatus, foodId].some((field) => field.trim() === "")
@@ -174,7 +174,11 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
       .json(new ApiResponse(404, null, "Food Post Not Found"));
   }
 
-  if (new Date(foodData.expiryTime) < new Date()) {
+  const foodOTPExpiryTime = moment(foodData.expiryTime).format(
+    "MMMM D, YYYY hh:mm:ss A"
+  );
+
+  if (moment(foodData.expiryTime).isBefore(moment())) {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Food Post has been expired"));
@@ -196,7 +200,7 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
   const reqFinalStatus = reqStatus === "Accept" ? "approved" : "rejected";
 
   requestData.status = reqFinalStatus;
-  // await requestData.save();
+  await requestData.save();
 
   if (reqFinalStatus === "approved") {
     const otp = otpGenerator.generate(6, {
@@ -206,20 +210,11 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
       specialChars: false,
     });
 
-    const expiryOTPTime = moment
-      .utc(new Date(foodData.expiryTime) - new Date())
-      .format("HH:mm:ss");
-
     foodData.verifyOTP = otp;
-    // foodData.OTPExpiryTime = expiryOTPTime;
 
-    console.log(moment().format("YYYY-MM-DD HH:mm:ss"));
-    console.log(foodData.expiryTime);
-    console.log(expiryOTPTime);
-
-    // await foodData.save({
-    //   validateBeforeSave: false,
-    // });
+    await foodData.save({
+      validateBeforeSave: false,
+    });
 
     await sendMail(
       recipientEmail,
@@ -228,7 +223,7 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
       `<p>Hello <b>${recipient.username}</b>,</p>
       <p>We wanted to inform you that your food request has been <b>${reqStatus.toLowerCase()}</b> by donor <b>${username}.</b></p>
       <p>Your OTP for verification is: <b>${otp}</b></p>
-      <p>Time remaining to use this OTP: <b>${expiryOTPTime}</b></p>
+      <p><strong>⚠️ Important Notice:</strong> Your OTP is valid until <span style="color: #e60000; font-weight: bold;">${foodOTPExpiryTime}</span>. <br/> Please use it before this time to ensure it's accepted.</p>
       <p>You can view the location of the donor using the following link: <a href="https://www.google.com/maps?q=${
         requestData.donorId.locationCoordinates.lat
       },${

@@ -3,7 +3,7 @@
 
 1) Make feedback form also give website email for any queries.
 2**)Remaining otp expiry and changing expiry time if used new Date() then also midify at sendForget password mail.
-
+3)Modisy forget reset password add oment instead of Date
 
 Admin : - 
 2) Track and report on how much food is donated and how many people are helped, with monthly reports provided specifically for admins to monitor the platform’s success and impact.

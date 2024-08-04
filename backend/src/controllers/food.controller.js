@@ -5,6 +5,7 @@ const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 const sendMail = require("../utils/sendMail");
+const moment = require("moment");
 
 const createPost = asyncHandler(async (req, res) => {
   const {
@@ -134,6 +135,15 @@ const getAllFoodPosts = asyncHandler(async (req, res) => {
 const verifyUserOTP = asyncHandler(async (req, res) => {
   const { otp, donorUsername } = req.body;
 
+  if (!otp) {
+    return res.status(400).json(new ApiResponse(400, null, "OTP is required"));
+  }
+  if (!donorUsername || donorUsername.trim() === "") {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Donor Username is required"));
+  }
+
   const foodData = await foodModel.findOne({
     verifyOTP: otp,
     userId: req.user._id,
@@ -151,13 +161,11 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
     return res.status(404).json(new ApiResponse(404, null, "No request found"));
   }
 
-  console.log(foodData.OTPExpiryTime);
-  console.log(new Date());
-  console.log(new Date() > foodData.OTPExpiryTime);
+  const currTime = moment();
+  const foodOTPExpiryTime = moment(foodData.expiryTime);
 
-  if (new Date() > foodData.OTPExpiryTime) {
+  if (currTime.isAfter(foodOTPExpiryTime)) {
     foodData.verifyOTP = undefined;
-    foodData.OTPExpiryTime = undefined;
     await foodData.save({
       validateBeforeSave: false,
     });
@@ -197,6 +205,7 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
   );
 
   foodData.status = "approved";
+  foodData.verifyOTP = undefined;
   await foodData.save({
     validateBeforeSave: false,
   });
