@@ -1,5 +1,11 @@
+0)Add register user : -  send mail register successfully.
 1) Make feedback form also give website email for any queries.
 2)Modify forget reset password add moment instead of Date
+3)Reporting and Analytics:
+Donation Reports: Donors can generate reports on their donation history, including the quantity of food donated and the impact of their contributions.
+4)Add footer also.
+5)Update Food Post
+6)Delete Food Post
 
 Admin : - 
 2) Track and report on how much food is donated and how many people are helped, with monthly reports provided specifically for admins to monitor the platform’s success and impact.
