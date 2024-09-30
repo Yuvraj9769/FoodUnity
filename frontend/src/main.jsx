@@ -23,6 +23,7 @@ import DonorRecievedRequests from "./components/DonorRecievedRequests.jsx";
 import FoodCardsUsers from "./components/FoodCardsUsers.jsx";
 import DonorsAllNotifications from "./components/DonorsAllNotifications.jsx";
 import VerifyFoodPostOTP from "./components/VerifyFoodPostOTP.jsx";
+import ChangePassword from "./components/ChangePassword.jsx";
 
 const router = createBrowserRouter([
   {
@@ -116,6 +117,14 @@ const router = createBrowserRouter([
       {
         path: "/emailSender",
         element: <EmailSender />,
+      },
+      {
+        path: "/reset-password/:token",
+        element: (
+          <LoggedNotComponent>
+            <ChangePassword />
+          </LoggedNotComponent>
+        ),
       },
       {
         path: "*",

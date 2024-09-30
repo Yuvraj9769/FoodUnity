@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 import handlePermissionRequest from "../utils/getUserLocation";
 import { toast } from "react-hot-toast";

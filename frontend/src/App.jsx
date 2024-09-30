@@ -12,6 +12,7 @@ import PageLoader from "./components/PageLoader";
 import secureLocalStorage from "react-secure-storage";
 import { getAllPostsForUser, getDonorPostedPosts } from "./api/foodApi";
 import toast from "react-hot-toast";
+import Footer from "./components/Footer";
 
 function App() {
   const userData = useSelector((state) => state.userData);
@@ -96,6 +97,7 @@ function App() {
         <>
           <Navbar setIsJWTExpired={setIsJWTExpired} />
           <Outlet />
+          <Footer />
         </>
       )}
     </div>

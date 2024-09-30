@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { FaEye } from "react-icons/fa";

@@ -2,6 +2,7 @@ const userModel = require("../models/user.model");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
+const sendMail = require("../utils/sendMail");
 const sendPasswordResetMail = require("../utils/sendMail");
 const axios = require("axios");
 
@@ -83,6 +84,17 @@ const registerUser = asyncHandler(async (req, res) => {
       .status(500)
       .json(new ApiResponse(500, null, "Something went wrong"));
   }
+
+  await sendMail(
+    user?.email,
+    "Registration Successful",
+    "Hello",
+    `<p>Hello, <b>${user?.fullName}</b></p>
+     <p>Thank you for registering! Your account has been successfully created.</p>
+     <p>If you have any questions or need assistance, feel free to contact us.</p>
+     <p>Best Regards,</p>
+     <b>Food Unity.</b>`
+  );
 
   res
     .status(201)
@@ -195,7 +207,7 @@ const sendForgetPasswordMail = asyncHandler(async (req, res) => {
 
   const url = `${process.env.FRONTEND_SERVER}reset-password/${token}`;
 
-  const mailResponse = await sendPasswordResetMail(
+  await sendPasswordResetMail(
     user?.email,
     "Password Reset Confirmation",
     "Hello ",

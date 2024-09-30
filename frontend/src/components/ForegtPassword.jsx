@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { SERVER } from "../utils/server";
@@ -66,7 +66,7 @@ const ForegtPassword = () => {
     setloader(true);
     (async () => {
       try {
-        const res = await axios.get(
+        await axios.get(
           `${SERVER}/users/checkExpiryTime/${token_React.current}`,
           {
             headers: {

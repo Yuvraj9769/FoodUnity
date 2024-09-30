@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import propTypes from "prop-types";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
 import Profile from "./Profile";
@@ -184,7 +185,7 @@ const Navbar = ({ setIsJWTExpired }) => {
               </button>
             </Link>
             <Link to="/register">
-              <button className="dark:bg-gray-800 bg-red-600 hover:bg-transparent duration-500 text-black dark:text-slate-50 font-bold py-2 shadow-md border border-transparent hover:text-black dark:hover:text-slate-50 hover:border-slate-50 ho px-4 rounded">
+              <button className="dark:bg-gray-800 bg-red-600 hover:bg-transparent duration-500 text-slate-50 font-bold py-2 shadow-md border border-transparent hover:text-black dark:hover:text-slate-50 hover:border-slate-50 ho px-4 rounded">
                 Register
               </button>
             </Link>
@@ -214,6 +215,10 @@ const Navbar = ({ setIsJWTExpired }) => {
       </button>
     </nav>
   );
+};
+
+Navbar.propTypes = {
+  setIsJWTExpired: propTypes.func.isRequired,
 };
 
 export default Navbar;
