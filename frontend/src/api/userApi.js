@@ -77,11 +77,45 @@ const checkLocation = async (lat, long) => {
         },
       }
     );
-    // console.log(res.data.data.results[0].annotations.OSM.url);
-    console.log(res.data);
     return res.data;
   } catch (error) {
     return "Error occured";
+  }
+};
+
+const checkTokenExipry = async (token) => {
+  try {
+    const res = await axios.post(
+      `${SERVER}/users/ispassword-reset-token-valid`,
+      token,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Error in verifying token";
+    throw new Error(errorMessage);
+  }
+};
+
+const updatePassword = async (data) => {
+  try {
+    const res = await axios.post(`${SERVER}/users/resetPassword`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message ||
+      "Error ocuured while updating the password";
+    throw new Error(errorMessage);
   }
 };
 
@@ -91,4 +125,6 @@ export {
   loginUser,
   sendResetPasswordMail,
   checkLocation,
+  checkTokenExipry,
+  updatePassword,
 };

@@ -5,6 +5,7 @@ const { uploadOnCloudinary } = require("../utils/cloudinary");
 const sendMail = require("../utils/sendMail");
 const sendPasswordResetMail = require("../utils/sendMail");
 const axios = require("axios");
+const moment = require("moment");
 
 const generateAccessTokenForAllTime = async (id, rememberme) => {
   try {
@@ -221,7 +222,7 @@ const sendForgetPasswordMail = asyncHandler(async (req, res) => {
 });
 
 const checkTokenExipry = asyncHandler(async (req, res) => {
-  const { token } = req.params;
+  const { token } = req.body;
 
   if (!token) {
     return res.status(400).json(new ApiResponse(400, null, "Unauthorized"));
@@ -230,14 +231,21 @@ const checkTokenExipry = asyncHandler(async (req, res) => {
   const userWithToken = await userModel.findOne({ passwordResetToken: token });
 
   if (!userWithToken) {
-    return res.status(410).json(
-      new ApiResponse(410, null, "Password reset link has already been used") //verify it again
-    );
+    return res
+      .status(410)
+      .json(
+        new ApiResponse(
+          410,
+          null,
+          "The password reset link is either invalid or has already been used."
+        )
+      );
   }
 
-  if (userWithToken.passwordResetExpires >= Date.now()) {
+  if (moment(userWithToken.passwordResetExpires).isSameOrAfter(moment())) {
     return res.status(200).json(new ApiResponse(200, null, "Ok"));
   }
+
   userWithToken.passwordResetToken = undefined;
   userWithToken.passwordResetExpires = undefined;
   await userWithToken.save();
@@ -245,19 +253,17 @@ const checkTokenExipry = asyncHandler(async (req, res) => {
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
-  const { token } = req.params;
+  const { username, newPassword, token } = req.body;
 
   if (!token) {
     return res.status(400).json(new ApiResponse(400, null, "Unauthorized"));
   }
 
-  const { username, newPassword } = req.body;
-
   const user = await userModel.findOne({ username });
   if (!user) {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
-  if (user.passwordResetExpires < Date.now()) {
+  if (moment(user.passwordResetExpires).isBefore(moment())) {
     return res.status(401).json(new ApiResponse(401, null, "Link expired"));
   }
 
@@ -274,7 +280,9 @@ const resetPassword = asyncHandler(async (req, res) => {
     <p>Your password has been successfully reset. If you did not initiate this action, please contact us immediately at ${process.env.USER}.</p>`
   );
 
-  return res.status(200).json(new ApiResponse(200, null, "Password reset"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Password reset successfully."));
 });
 
 const logoutUser = asyncHandler(async (req, res) => {

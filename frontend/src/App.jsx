@@ -96,7 +96,9 @@ function App() {
       ) : (
         <>
           <Navbar setIsJWTExpired={setIsJWTExpired} />
-          <Outlet />
+          <div className="min-h-screen">
+            <Outlet />
+          </div>
           <Footer />
         </>
       )}

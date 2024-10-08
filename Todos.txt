@@ -1,6 +1,6 @@
-0) In ChangePassword component just check whether token is valid or not of password reset token?
+0)Create manage your account page component.
 1) Make feedback form also give website email for any queries.
-2)Modify forget reset password add moment instead of Date
+
 3)Reporting and Analytics:
 Donation Reports: Donors can generate reports on their donation history, including the quantity of food donated and the impact of their contributions.
 5)Update Food Post
