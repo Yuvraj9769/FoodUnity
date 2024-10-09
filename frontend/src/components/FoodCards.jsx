@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDonorPostedPosts } from "../api/foodApi";
 import { useDispatch, useSelector } from "react-redux";
 import { setPostData } from "../features/foodUnity";
@@ -9,12 +9,16 @@ import { Link, useNavigate } from "react-router-dom";
 import PageLoader from "./PageLoader";
 import secureLocalStorage from "react-secure-storage";
 import { FcAlarmClock } from "react-icons/fc";
+import { MdDelete } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
 
 const FoodCards = () => {
   const dispatch = useDispatch();
   const postData = useSelector((state) => state.postData);
   const userData = useSelector((state) => state.userData);
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
+
+  const [popupBox, setPopupBox] = useState(false);
 
   const navigate = useNavigate();
 
@@ -73,6 +77,14 @@ const FoodCards = () => {
     return `${hourInt}:${minute} ${ampm}`;
   };
 
+  const deletePost = async (ind) => {
+    try {
+      console.log(ind);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -81,7 +93,7 @@ const FoodCards = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4 lg:gap-6 xl:gap-5">
           {postData.map((e, ind) => (
             <div
-              className="max-w-sm rounded-lg overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800"
+              className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800"
               key={ind}
             >
               <img
@@ -115,11 +127,45 @@ const FoodCards = () => {
                   </span>
                 </div>
               </div>
-              <div className="px-6 pt-4 pb-2 flex gap-2 items-center">
+              <div className="px-6 pt-4 pb-2 flex flex-wrap w-full justify-between bg-red-500 items-center">
                 <span className="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
                   #{e.foodType.charAt(0).toUpperCase() + e.foodType.slice(1)}
                 </span>
+                <div className="p-2 inline-flex items-center gap-3">
+                  <MdDelete
+                    className="text-2xl cursor-pointer hover:scale-105 duration-500"
+                    onClick={() => setPopupBox(!popupBox)}
+                  />
+                  <CiEdit className="text-2xl cursor-pointer hover:scale-105 duration-500" />
+                </div>
               </div>
+
+              {popupBox && (
+                <div
+                  className="before:bg-black before:opacity-85 before:fixed before:top-0 before:left-0 before:h-full before:z-10 before:w-full h-full w-full fixed left-0 top-0 bg-transparent inline-flex items-center justify-center"
+                  key={ind}
+                >
+                  <div className="inline-flex flex-col items-center gap-5 bg-slate-50 p-4 rounded-lg relative z-20">
+                    <p className="text-xl font-semibold">
+                      Are you sure want to delete this post?
+                    </p>
+                    <div className="inline-flex items-center mt-2 w-full justify-around">
+                      <button
+                        className="px-4 py-2 shadow-md shadow-black rounded-md border-none outline-none text-slate-50 text-lg bg-green-500"
+                        onClick={() => deletePost(e)}
+                      >
+                        Yes
+                      </button>
+                      <button
+                        className="px-4 py-2 shadow-md shadow-black rounded-md border-none outline-none text-slate-50 text-lg bg-red-500"
+                        onClick={() => setPopupBox(!popupBox)}
+                      >
+                        No
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

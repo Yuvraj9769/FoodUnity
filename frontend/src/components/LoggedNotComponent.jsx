@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const LoggedNotComponent = ({ children }) => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -17,6 +18,10 @@ const LoggedNotComponent = ({ children }) => {
       {!isLoggedIn && children}
     </div>
   );
+};
+
+LoggedNotComponent.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default LoggedNotComponent;

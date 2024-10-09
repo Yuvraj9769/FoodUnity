@@ -343,27 +343,29 @@ const updateProfile = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Mobile number is required"));
   }
 
-  const user = await userModel.findByIdAndUpdate(
-    req.user._id,
-    {
-      $set: {
-        fullName: fullName,
-        username: username,
-        email: email,
-        mobileNumber: mobNo,
+  const user = await userModel
+    .findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: {
+          fullName,
+          username,
+          email,
+          mobileNumber: mobNo,
+        },
       },
-    },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+    .select("-password -passwordResetToken -passwordResetExpires");
 
   if (!user) {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
 
-  return res.status(200).json(new ApiResponse(200, null, "Profile updated"));
+  return res.status(200).json(new ApiResponse(200, user, "Profile updated"));
 });
 
 const getUserLocation = asyncHandler(async (req, res) => {
@@ -418,6 +420,39 @@ const checkIsLogin = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, null, "Logged In"));
 });
 
+const ChangePassword = asyncHandler(async (req, res) => {
+  const { username, oldPassword, newPassword } = req.body;
+
+  if (
+    [username, oldPassword, newPassword].some((field) => field.trim() === "")
+  ) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "All Fields Required"));
+  }
+
+  const user = await userModel.findOne({ username });
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  const match = await user.verifyPassword(oldPassword);
+
+  if (!match) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Old Password is incorrect"));
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Password updated successfully"));
+});
+
 // Sample output : -
 // {
 //   documentation: 'https://opencagedata.com/api',
@@ -464,4 +499,5 @@ module.exports = {
   updateProfile,
   getUserLocation,
   checkIsLogin,
+  ChangePassword,
 };

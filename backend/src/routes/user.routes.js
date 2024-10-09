@@ -8,6 +8,8 @@ const {
   checkIsLogin,
   checkTokenExipry,
   resetPassword,
+  updateProfile,
+  ChangePassword,
 } = require("../controllers/user.controller");
 const verifyJwt = require("../middlewares/jwtVerify.middleware");
 
@@ -24,5 +26,7 @@ router.route("/checkislogin").get(verifyJwt, checkIsLogin);
 router.route("/getData").get(verifyJwt, userData);
 router.route("/logout").get(verifyJwt, logoutUser);
 router.route("/location").post(verifyJwt, getUserLocation);
+router.route("/updateProfile").patch(verifyJwt, updateProfile);
+router.route("/changePassword").patch(verifyJwt, ChangePassword);
 
 module.exports = router;

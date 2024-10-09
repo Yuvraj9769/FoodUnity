@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import secureLocalStorage from "react-secure-storage";
@@ -14,7 +14,6 @@ const LoginOrSignupForm = () => {
   const dispatch = useDispatch();
 
   const postData = useSelector((state) => state.postData);
-  const userData = useSelector((state) => state.userData);
   const [disPassword, setDispassword] = useState(false);
   const username = useRef("");
   const password = useRef("");

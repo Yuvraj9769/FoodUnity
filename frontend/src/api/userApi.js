@@ -119,6 +119,41 @@ const updatePassword = async (data) => {
   }
 };
 
+const updateProfileData = async (data) => {
+  try {
+    const res = await axios.patch(`${SERVER}/users/updateProfile`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(res);
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message ||
+      "Data updation failed please try later!";
+    throw new Error(errorMessage);
+  }
+};
+
+const changePassword = async (data) => {
+  try {
+    const res = await axios.patch(`${SERVER}/users/changePassword`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Password updation failed";
+    throw new Error(errorMessage);
+  }
+};
+
 export {
   logoutUser,
   registerUser,
@@ -127,4 +162,6 @@ export {
   checkLocation,
   checkTokenExipry,
   updatePassword,
+  updateProfileData,
+  changePassword,
 };

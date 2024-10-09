@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { IoMdCamera } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
@@ -16,6 +16,7 @@ import { IoMdNotifications } from "react-icons/io";
 import secureLocalStorage from "react-secure-storage";
 import { FaListAlt } from "react-icons/fa";
 import { AiOutlineHistory } from "react-icons/ai";
+import PropTypes from "prop-types";
 
 const Profile = ({ logout }) => {
   const userData = useSelector((state) => state.userData);
@@ -171,6 +172,10 @@ const Profile = ({ logout }) => {
       </p>
     </div>
   );
+};
+
+Profile.propTypes = {
+  logout: PropTypes.func.isRequired,
 };
 
 export default Profile;

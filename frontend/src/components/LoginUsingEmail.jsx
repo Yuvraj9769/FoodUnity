@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import secureLocalStorage from "react-secure-storage";
-import { useDispatch } from "react-redux";
-import { getUserData, setIsLoggedIn } from "../features/foodUnity";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserData, setIsLoggedIn, setPostData } from "../features/foodUnity";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import validator from "validator";
@@ -13,6 +13,8 @@ import { getAllPostsForUser, getDonorPostedPosts } from "../api/foodApi";
 const LoginUsingEmail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const postData = useSelector((state) => state.postData);
 
   const [disPassword, setDispassword] = useState(false);
   const email = useRef("");

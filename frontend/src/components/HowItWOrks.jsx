@@ -1,8 +1,7 @@
-import React from "react";
 import { IoMdAdd } from "react-icons/io";
 import { useSelector } from "react-redux";
 
-const HowItWOrks = () => {
+const HowItWorks = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
 
   return (
@@ -64,4 +63,4 @@ const HowItWOrks = () => {
   );
 };
 
-export default HowItWOrks;
+export default HowItWorks;

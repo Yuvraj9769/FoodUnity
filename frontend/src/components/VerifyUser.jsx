@@ -1,6 +1,6 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
+import PropTypes from "prop-types";
 
 const VerifyUser = ({ children }) => {
   console.log(secureLocalStorage.getItem("recipient"));
@@ -10,6 +10,10 @@ const VerifyUser = ({ children }) => {
       {secureLocalStorage.getItem("recipient") ? children : <Navigate to="/" />}
     </>
   );
+};
+
+VerifyUser.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default VerifyUser;

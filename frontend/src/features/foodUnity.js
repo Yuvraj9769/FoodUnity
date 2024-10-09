@@ -92,6 +92,7 @@ export const {
   setSidebarVisible,
   setLocation,
   setPostData,
+  setUserData,
 } = foodUnity.actions;
 
 export default foodUnity.reducer;

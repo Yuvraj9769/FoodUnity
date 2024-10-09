@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    mobileNumber: {
+      type: String,
+      required: true,
+    },
     role: {
       type: String,
       enum: ["donor", "recipient"],

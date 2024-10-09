@@ -24,6 +24,8 @@ import FoodCardsUsers from "./components/FoodCardsUsers.jsx";
 import DonorsAllNotifications from "./components/DonorsAllNotifications.jsx";
 import VerifyFoodPostOTP from "./components/VerifyFoodPostOTP.jsx";
 import ChangePassword from "./components/ChangePassword.jsx";
+import UpdateProfile from "./components/UpdateProfile.jsx";
+import UpdatePassword from "./components/UpdatePassword.jsx";
 
 const router = createBrowserRouter([
   {
@@ -115,20 +117,20 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/updateProfile",
+        element: <UpdateProfile />,
+      },
+      {
+        path: "/updatePassword",
+        element: <UpdatePassword />,
+      },
+      {
         path: "/emailSender",
         element: <EmailSender />,
       },
       {
         path: "/reset-password/:token",
-        element: (
-          <LoggedNotComponent>
-            <ChangePassword />
-          </LoggedNotComponent>
-        ),
-      },
-      {
-        path: "*",
-        element: <NotFound />,
+        element: <ChangePassword />,
       },
     ],
   },
