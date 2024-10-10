@@ -1,4 +1,4 @@
-0)Delete Post and Update post working.
+0)Update post working.
 1) Make feedback form also give website email for any queries use useState not useRef.
 
 3)Reporting and Analytics:

@@ -152,6 +152,26 @@ const isLoggedIn = async () => {
   }
 };
 
+const deleteFoodPost = async (delId) => {
+  try {
+    const res = await axios.patch(
+      `${SERVER}/foods/deletePost`,
+      { delId },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Food post deletion failed";
+    return errorMessage;
+  }
+};
+
 export {
   createFoodPost,
   getDonorPostedPosts,
@@ -162,4 +182,5 @@ export {
   rejectOrAcceptRequest,
   verifyUserOTP,
   isLoggedIn,
+  deleteFoodPost,
 };

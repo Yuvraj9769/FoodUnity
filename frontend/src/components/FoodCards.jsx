@@ -11,6 +11,7 @@ import secureLocalStorage from "react-secure-storage";
 import { FcAlarmClock } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
+import { deleteFoodPost } from "../api/foodApi";
 
 const FoodCards = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,7 @@ const FoodCards = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
 
   const [popupBox, setPopupBox] = useState(false);
+  const [delIndex, setDelIndex] = useState(null);
 
   const navigate = useNavigate();
 
@@ -77,9 +79,21 @@ const FoodCards = () => {
     return `${hourInt}:${minute} ${ampm}`;
   };
 
-  const deletePost = async (ind) => {
+  const getDeletePost = (ind) => {
+    setDelIndex(ind);
+    setPopupBox(true);
+  };
+
+  const deletePost = async () => {
     try {
-      console.log(ind);
+      setPopupBox(false);
+      const res = await deleteFoodPost(postData[delIndex]._id);
+      console.log(res);
+      if (res.statusCode === 200 && res.success) {
+        const updatedPostData = await getDonorPostedPosts();
+        dispatch(setPostData(updatedPostData));
+        toast.success("Post deleted successfully");
+      }
     } catch (error) {
       toast.error(error.message);
     }
@@ -134,13 +148,13 @@ const FoodCards = () => {
                 <div className="p-2 inline-flex items-center gap-3">
                   <MdDelete
                     className="text-2xl cursor-pointer hover:scale-105 duration-500"
-                    onClick={() => setPopupBox(!popupBox)}
+                    onClick={() => getDeletePost(ind)}
                   />
                   <CiEdit className="text-2xl cursor-pointer hover:scale-105 duration-500" />
                 </div>
               </div>
 
-              {popupBox && (
+              {popupBox && delIndex === ind && (
                 <div
                   className="before:bg-black before:opacity-85 before:fixed before:top-0 before:left-0 before:h-full before:z-10 before:w-full h-full w-full fixed left-0 top-0 bg-transparent inline-flex items-center justify-center"
                   key={ind}

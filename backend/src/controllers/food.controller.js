@@ -87,7 +87,10 @@ const createPost = asyncHandler(async (req, res) => {
 
 //updation remaining (can add pagination other done) in follow: -
 const getDonorsAllPosts = asyncHandler(async (req, res) => {
-  const foodPosts = await foodModel.find({ userId: req.user._id });
+  const foodPosts = await foodModel.find({
+    userId: req.user._id,
+    isDelete: false,
+  });
 
   if (!foodPosts) {
     return res
@@ -218,9 +221,43 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, user, "OTP Verified"));
 });
 
+const deleteFoodPost = asyncHandler(async (req, res) => {
+  //not deleting post just setting isDelete: true because user has this data in his history else that will also delete.
+
+  const { delId } = req.body;
+
+  if (!delId) {
+    return res.status(400).json(new ApiResponse(400, null, "Invalid Request"));
+  }
+
+  const foodPost = await foodModel.findByIdAndUpdate(
+    delId,
+    {
+      $set: {
+        isDelete: true,
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!foodPost) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Food post not found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Post deleted successfully"));
+});
+
 module.exports = {
   createPost,
   getDonorsAllPosts,
   getAllFoodPosts,
   verifyUserOTP,
+  deleteFoodPost,
 };

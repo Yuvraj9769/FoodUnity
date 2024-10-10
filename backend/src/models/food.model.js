@@ -44,6 +44,10 @@ const foodSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    isDelete: {
+      type: Boolean,
+      default: false,
+    },
     pickupOptions: {
       type: String,
       enum: ["pickup", "delivery"],
