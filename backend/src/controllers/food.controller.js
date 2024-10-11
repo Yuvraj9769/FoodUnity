@@ -254,10 +254,95 @@ const deleteFoodPost = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Post deleted successfully"));
 });
 
+const updateFoodPost = asyncHandler(async (req, res) => {
+  const {
+    id,
+    title,
+    quantity,
+    foodType,
+    expTime,
+    pickupTime,
+    pickupOption,
+    name,
+    desc,
+    number,
+    pickupLocation,
+  } = req.body;
+
+  if (
+    [
+      id,
+      title,
+      foodType,
+      expTime,
+      pickupTime,
+      pickupOption,
+      name,
+      desc,
+      number,
+      pickupLocation,
+    ].some((field) => field.trim() === "")
+  ) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "All fields are required"));
+  }
+
+  const localFilePath = req?.file?.path;
+
+  if (!localFilePath) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Image is required"));
+  }
+
+  const cloudinaryResonse = await uploadOnCloudinary(localFilePath);
+
+  if (!cloudinaryResonse) {
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Failed to upload image"));
+  }
+
+  const foodPost = await foodModel.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        foodTitle: title,
+        description: desc,
+        quantity,
+        foodType,
+        foodImage: cloudinaryResonse.secure_url,
+        expiryTime: expTime,
+        pickupLocation,
+        pickupTime,
+        contactName: name,
+        contactNumber: number,
+        pickupOptions: pickupOption,
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!foodPost) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Food post not found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Post updated successfully"));
+});
+
 module.exports = {
   createPost,
   getDonorsAllPosts,
   getAllFoodPosts,
   verifyUserOTP,
   deleteFoodPost,
+  updateFoodPost,
 };

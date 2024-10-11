@@ -7,7 +7,7 @@ const Home = () => {
   const userData = useSelector((state) => state.userData);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white relative">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white relative rounded-md">
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-4">Welcome to FoodUnity</h1>
         <p className="mb-4">
@@ -23,7 +23,7 @@ const Home = () => {
             <strong className="text-xl dark:text-slate-50 text-black">
               Donation Listings:
             </strong>
-            <ul>
+            <ul className="list-disc list-inside">
               <li>
                 Post surplus food items from individuals, restaurants, or
                 grocery stores for donation.
@@ -32,13 +32,18 @@ const Home = () => {
                 Users in need can search and request available food items in
                 their local area.
               </li>
+              <li>Donor can delete and create posts.</li>
+              <li>
+                Donor can update their post within 10 minutes by uploading it
+                again.
+              </li>
             </ul>
           </li>
           <li className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg inline-flex flex-col gap-2 shadow-md">
             <strong className="text-xl dark:text-slate-50 text-black">
               Community Support:
             </strong>
-            <ul>
+            <ul className="list-disc list-inside">
               <li>
                 Foster community engagement and support through food sharing
                 initiatives.
@@ -53,7 +58,7 @@ const Home = () => {
             <strong className="text-xl dark:text-slate-50 text-black">
               User-friendly Interface:
             </strong>
-            <ul>
+            <ul className="list-disc list-inside">
               <li>
                 Intuitive platform design ensures easy navigation and
                 interaction.

@@ -168,7 +168,23 @@ const deleteFoodPost = async (delId) => {
   } catch (error) {
     const errorMessage =
       error?.response?.data?.message || "Food post deletion failed";
-    return errorMessage;
+    throw new Error(errorMessage);
+  }
+};
+
+const updateFoodPost = async (data) => {
+  try {
+    const res = await axios.patch(`${SERVER}/foods/updatefoodpost`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Food post updation failed";
+    throw new Error(errorMessage);
   }
 };
 
@@ -183,4 +199,5 @@ export {
   verifyUserOTP,
   isLoggedIn,
   deleteFoodPost,
+  updateFoodPost,
 };

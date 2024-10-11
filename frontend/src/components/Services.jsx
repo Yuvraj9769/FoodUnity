@@ -13,48 +13,48 @@ const Services = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-2">Individual Donations</h2>
-            <p className="text-sm dark:text-gray-300">
+            <p className="text-base dark:text-gray-300">
               Post individual surplus food items for donation securely.
             </p>
           </div>
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-2">Restaurant Donations</h2>
-            <p className="text-sm dark:text-gray-300">
+            <p className="text-base dark:text-gray-300">
               Restaurants can donate excess food items securely and
               conveniently.
             </p>
           </div>
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-2">Grocery Store Donations</h2>
-            <p className="text-sm dark:text-gray-300">
+            <p className="text-base dark:text-gray-300">
               Grocery stores can securely donate surplus food stock.
             </p>
           </div>
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-2">Local Community Support</h2>
-            <p className="text-sm dark:text-gray-300">
+            <p className="text-base dark:text-gray-300">
               Engage local communities securely in supporting food sharing
               initiatives.
             </p>
           </div>
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-2">Request Food Items</h2>
-            <p className="text-sm dark:text-gray-300">
+            <p className="text-base dark:text-gray-300">
               Users in need can securely search and request available food
               items.
             </p>
           </div>
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-2">Coordinate Pickups</h2>
-            <p className="text-sm dark:text-gray-300">
+            <p className="text-base dark:text-gray-300">
               Coordinate securely with donors for food item pickups.
             </p>
           </div>
         </div>
 
         <div className="mt-8">
-          <h2 className="text-xl font-bold mb-2">Why Choose FoodUnity?</h2>
-          <ul className="list-disc list-inside text-sm">
+          <h2 className="text-xl font-bold mb-2">Why Choose Food Unity?</h2>
+          <ul className="list-disc list-inside text-base">
             <li className="mb-2">
               Secure platform ensuring privacy and data protection.
             </li>

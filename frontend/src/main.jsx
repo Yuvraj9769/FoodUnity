@@ -26,6 +26,7 @@ import VerifyFoodPostOTP from "./components/VerifyFoodPostOTP.jsx";
 import ChangePassword from "./components/ChangePassword.jsx";
 import UpdateProfile from "./components/UpdateProfile.jsx";
 import UpdatePassword from "./components/UpdatePassword.jsx";
+import UpdateFoodPostForm from "./components/UpdateFoodPostForm.jsx";
 
 const router = createBrowserRouter([
   {
@@ -131,6 +132,10 @@ const router = createBrowserRouter([
       {
         path: "/reset-password/:token",
         element: <ChangePassword />,
+      },
+      {
+        path: "/updateFoodPost/:ind",
+        element: <UpdateFoodPostForm />,
       },
     ],
   },

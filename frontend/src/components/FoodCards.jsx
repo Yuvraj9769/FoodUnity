@@ -12,6 +12,8 @@ import { FcAlarmClock } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import { deleteFoodPost } from "../api/foodApi";
+import calculateTimeDifferenceString from "../utils/calculateTimeDifferenceString";
+import getClockTime from "../utils/getClockTime";
 
 const FoodCards = () => {
   const dispatch = useDispatch();
@@ -46,39 +48,6 @@ const FoodCards = () => {
     }, 700);
   }, []);
 
-  const calculateTimeDifferenceString = (createdAt) => {
-    const postCreatedAt = createdAt ? new Date(createdAt).getTime() : null;
-    const currentTime = Date.now();
-    let timeDifferenceString = "";
-
-    if (postCreatedAt !== null) {
-      const timeDifference = currentTime - postCreatedAt; // in milliseconds
-      const minutesDifference = Math.floor(timeDifference / (1000 * 60));
-      const hoursDifference = Math.floor(minutesDifference / 60);
-      const remainingMinutes = minutesDifference % 60;
-
-      if (hoursDifference > 0) {
-        timeDifferenceString += `${hoursDifference} hr${
-          hoursDifference > 1 ? "s" : ""
-        } `;
-      }
-
-      timeDifferenceString += `${remainingMinutes} min${
-        remainingMinutes !== 1 ? "s" : ""
-      } `;
-    }
-
-    return timeDifferenceString.trim();
-  };
-
-  const getClockTime = (time) => {
-    const [hour, minute] = time.split(":");
-    let hourInt = parseInt(hour, 10); //converts the string hour into an integer using the decimal (base-10) numeral system.
-    const ampm = hourInt >= 12 ? "PM" : "AM";
-    hourInt = hourInt % 12 || 12;
-    return `${hourInt}:${minute} ${ampm}`;
-  };
-
   const getDeletePost = (ind) => {
     setDelIndex(ind);
     setPopupBox(true);
@@ -88,7 +57,6 @@ const FoodCards = () => {
     try {
       setPopupBox(false);
       const res = await deleteFoodPost(postData[delIndex]._id);
-      console.log(res);
       if (res.statusCode === 200 && res.success) {
         const updatedPostData = await getDonorPostedPosts();
         dispatch(setPostData(updatedPostData));
@@ -141,16 +109,18 @@ const FoodCards = () => {
                   </span>
                 </div>
               </div>
-              <div className="px-6 pt-4 pb-2 flex flex-wrap w-full justify-between bg-red-500 items-center">
+              <div className="px-6 pt-4 pb-2 flex flex-wrap w-full justify-between items-center">
                 <span className="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
                   #{e.foodType.charAt(0).toUpperCase() + e.foodType.slice(1)}
                 </span>
-                <div className="p-2 inline-flex items-center gap-3">
+                <div className="p-2 inline-flex items-center gap-3 text-black dark:text-slate-50">
                   <MdDelete
                     className="text-2xl cursor-pointer hover:scale-105 duration-500"
                     onClick={() => getDeletePost(ind)}
                   />
-                  <CiEdit className="text-2xl cursor-pointer hover:scale-105 duration-500" />
+                  <Link to={`/updateFoodPost/${ind}`}>
+                    <CiEdit className="text-2xl cursor-pointer hover:scale-105 duration-500" />
+                  </Link>
                 </div>
               </div>
 

@@ -1,10 +1,7 @@
-0)Update post working.
 1) Make feedback form also give website email for any queries use useState not useRef.
 
 3)Reporting and Analytics:
 Donation Reports: Donors can generate reports on their donation history, including the quantity of food donated and the impact of their contributions.
-5)Update Food Post
-6)Delete Food Post
 
 Admin : - 
 2) Track and report on how much food is donated and how many people are helped, with monthly reports provided specifically for admins to monitor the platform’s success and impact.
