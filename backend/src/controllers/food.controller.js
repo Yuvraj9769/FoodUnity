@@ -130,10 +130,13 @@ const getAllFoodPosts = asyncHandler(async (req, res) => {
         requestStatus,
       };
     })
-    .filter(
-      ({ requestStatus }) =>
-        requestStatus != "OTP Expired" && requestStatus != "approved"
-    );
+    .filter(({ requestStatus, food }) => {
+      return (
+        requestStatus != "OTP Expired" &&
+        requestStatus != "approved" &&
+        moment().diff(moment(food.createdAt), "days") < 1
+      );
+    });
 
   res
     .status(200)
@@ -338,6 +341,32 @@ const updateFoodPost = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Post updated successfully"));
 });
 
+const userPostsHistory = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const posts = await requestModel
+    .find({ requesterId: userId })
+    .populate(
+      "foodId",
+      "foodTitle description foodType expiryTime foodImage pickupTime contactName pickupOptions createdAt"
+    )
+    .select("status")
+    .lean();
+
+  if (!posts) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  const foodPosts = posts.map(({ foodId, ...rest }) => {
+    return {
+      ...rest,
+      ...foodId,
+    };
+  });
+
+  return res.status(200).json(new ApiResponse(200, foodPosts, "ok"));
+});
+
 module.exports = {
   createPost,
   getDonorsAllPosts,
@@ -345,4 +374,5 @@ module.exports = {
   verifyUserOTP,
   deleteFoodPost,
   updateFoodPost,
+  userPostsHistory,
 };

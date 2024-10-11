@@ -62,7 +62,6 @@ const Navbar = ({ setIsJWTExpired }) => {
   useEffect(() => {
     if (!donor && postData.length != 0 && userData?.role === "donor") {
       setDonor(secureLocalStorage.getItem("donor"));
-      console.log("Called");
     }
   }, [donor, userData, postData]);
 

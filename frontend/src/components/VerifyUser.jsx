@@ -3,8 +3,6 @@ import secureLocalStorage from "react-secure-storage";
 import PropTypes from "prop-types";
 
 const VerifyUser = ({ children }) => {
-  console.log(secureLocalStorage.getItem("recipient"));
-
   return (
     <>
       {secureLocalStorage.getItem("recipient") ? children : <Navigate to="/" />}

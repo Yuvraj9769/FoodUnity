@@ -188,6 +188,22 @@ const updateFoodPost = async (data) => {
   }
 };
 
+const getUserPostHistory = async () => {
+  try {
+    const res = await axios.get(`${SERVER}/foods/getUserPostHistory`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Post fetching failed";
+    throw new Error(errorMessage);
+  }
+};
+
 export {
   createFoodPost,
   getDonorPostedPosts,
@@ -200,4 +216,5 @@ export {
   isLoggedIn,
   deleteFoodPost,
   updateFoodPost,
+  getUserPostHistory,
 };

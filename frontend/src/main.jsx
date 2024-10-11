@@ -27,6 +27,7 @@ import ChangePassword from "./components/ChangePassword.jsx";
 import UpdateProfile from "./components/UpdateProfile.jsx";
 import UpdatePassword from "./components/UpdatePassword.jsx";
 import UpdateFoodPostForm from "./components/UpdateFoodPostForm.jsx";
+import UserPostHistory from "./components/UserPostHistory.jsx";
 
 const router = createBrowserRouter([
   {
@@ -136,6 +137,14 @@ const router = createBrowserRouter([
       {
         path: "/updateFoodPost/:ind",
         element: <UpdateFoodPostForm />,
+      },
+      {
+        path: "/postHistory",
+        element: (
+          <VerifyUser>
+            <UserPostHistory />
+          </VerifyUser>
+        ),
       },
     ],
   },

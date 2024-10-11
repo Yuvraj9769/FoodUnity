@@ -90,7 +90,7 @@ function App() {
   }, [userData, isJWTExpired]);
 
   return (
-    <div className="flex flex-col items-center gap-4 dark:bg-slate-950 bg-slate-50 min-h-screen">
+    <div className="flex flex-col items-center gap-4 dark:bg-slate-950 bg-slate-50 h-full">
       {loading ? (
         <PageLoader />
       ) : (

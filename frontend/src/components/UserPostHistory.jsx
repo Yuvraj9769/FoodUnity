@@ -1,95 +1,76 @@
-import { useEffect, useState } from "react";
-import {
-  getAllPostsForUser,
-  getUserPostHistory,
-  sendOrderReuest,
-} from "../api/foodApi";
 import { useDispatch, useSelector } from "react-redux";
-import { setPostData, setUserHistoryPosts } from "../features/foodUnity";
-import { toast } from "react-hot-toast";
 import { LuFileClock } from "react-icons/lu";
-import { useNavigate } from "react-router-dom";
 import PageLoader from "./PageLoader";
-import secureLocalStorage from "react-secure-storage";
 import { FcAlarmClock } from "react-icons/fc";
+import { useEffect, useState } from "react";
+import secureLocalStorage from "react-secure-storage";
+import { getUserPostHistory } from "../api/foodApi";
+import { toast } from "react-hot-toast";
+import { setUserHistoryPosts } from "../features/foodUnity";
 import calculateTimeDifferenceString from "../utils/calculateTimeDifferenceString";
 import getClockTime from "../utils/getClockTime";
 
-const FoodCardsUsers = () => {
-  const dispatch = useDispatch();
-  const postData = useSelector((state) => state.postData);
+const UserPostHistory = () => {
+  const userHistoryPosts = useSelector((state) => state.userHistoryPosts);
 
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const user = secureLocalStorage.getItem("recipient");
-    setTimeout(() => {
-      if (user && postData.length == 0) {
-        (async () => {
-          try {
-            const data = await getAllPostsForUser();
-            dispatch(setPostData(data));
-          } catch (error) {
-            toast.error(error.message);
-            navigate("/");
-          } finally {
-            setLoading(false);
-          }
-        })();
-      } else {
-        setLoading(false);
-      }
-    }, 200);
-  }, []);
 
-  const sendReuest = async (id) => {
-    try {
-      setLoading(true);
-      const res = await sendOrderReuest(id);
-      toast.success(res.data.message);
-      const data = await getAllPostsForUser();
-      dispatch(setPostData(data));
-      const historyData = await getUserPostHistory();
-      dispatch(setUserHistoryPosts(historyData));
-    } catch (error) {
-      toast.error(error.message);
-      navigate("/");
-    } finally {
+    if (userHistoryPosts.length === 0 && user) {
+      (async () => {
+        try {
+          const res = await getUserPostHistory();
+          dispatch(setUserHistoryPosts(res));
+        } catch (error) {
+          toast.error(error.message);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else {
       setLoading(false);
     }
-  };
+  }, [userHistoryPosts]);
 
   return (
     <>
       {loading ? (
         <PageLoader />
-      ) : postData.length != 0 ? (
+      ) : userHistoryPosts.length != 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4">
-          {postData.map((food, ind) => (
+          {userHistoryPosts.map((food, ind) => (
             <div
               className="max-w-sm rounded-lg overflow-hidden shadow-lg dark:shadow-gray-700 shadow-slate-800 bg-white dark:bg-gray-800"
               key={ind}
             >
               <img
-                src={food.food.foodImage}
+                src={food.foodImage}
                 alt="Food Image"
                 className="w-full h-48 object-cover object-center"
               />
               <div className="px-6 py-4 h-[220px] flex flex-col items-start justify-between">
                 <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
-                  {food.food.foodTitle}
+                  {food.foodTitle}
                 </div>
                 <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll h-[92px] scroller-display-none">
-                  {food.food.description}
+                  {food.description}
                 </p>
                 <div className="flex items-center justify-between w-full">
                   <span className="text-sm font-semibold text-black dark:text-slate-50">
-                    Posted By: {food.food.contactName}
+                    Posted By: {food.contactName}
                   </span>
                   <span className="text-sm text-gray-600 dark:text-gray-400 inline-flex items-center gap-1">
-                    {calculateTimeDifferenceString(food.food.createdAt)}
+                    {calculateTimeDifferenceString(food.createdAt)?.split(
+                      "hrs"
+                    )[0] > 55
+                      ? "A few days old"
+                      : calculateTimeDifferenceString(food.createdAt) === 0
+                      ? "Just now"
+                      : calculateTimeDifferenceString(food.createdAt)}
                     <LuFileClock />
                   </span>
                 </div>
@@ -98,7 +79,7 @@ const FoodCardsUsers = () => {
                     Expires in:
                   </span>
                   <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2">
-                    {getClockTime(food.food.expiryTime)}
+                    {getClockTime(food.expiryTime)}
                     <FcAlarmClock className="text-xl" />
                   </span>
                 </div>
@@ -106,19 +87,19 @@ const FoodCardsUsers = () => {
               <div className="px-6 pt-4 pb-2 flex justify-between items-center w-full">
                 <span className="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
                   #
-                  {food.food.foodType.charAt(0).toUpperCase() +
-                    food.food.foodType.slice(1)}
+                  {food.foodType.charAt(0).toUpperCase() +
+                    food.foodType.slice(1)}
                 </span>
                 <button
-                  onClick={() => sendReuest(food.food._id)}
                   className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full ${
-                    postData[ind]?.requestStatus === "requested" ||
-                    postData[ind]?.requestStatus === "approved"
+                    userHistoryPosts[ind]?.status === "requested" ||
+                    userHistoryPosts[ind]?.status === "approved" ||
+                    userHistoryPosts[ind]?.status === "OTP Expired"
                       ? "opacity-70 pointer-events-none"
                       : ""
                   }`}
                 >
-                  {postData[ind]?.requestStatus}
+                  {userHistoryPosts[ind]?.status}
                 </button>
               </div>
             </div>
@@ -135,4 +116,4 @@ const FoodCardsUsers = () => {
   );
 };
 
-export default FoodCardsUsers;
+export default UserPostHistory;

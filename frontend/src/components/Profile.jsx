@@ -155,7 +155,7 @@ const Profile = ({ logout }) => {
         </Link>
       ) : (
         <Link
-          to="/foods/VerifyOTP"
+          to="/postHistory"
           onClick={() => dispatch(setProfile(!profile))}
           className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
         >
