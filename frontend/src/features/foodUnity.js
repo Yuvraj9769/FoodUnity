@@ -37,6 +37,7 @@ const initialState = {
   location: null,
   postData: [],
   userHistoryPosts: [],
+  userRequestPostsData: [],
 };
 
 const foodUnity = createSlice({
@@ -70,6 +71,9 @@ const foodUnity = createSlice({
     setUserHistoryPosts: (state, action) => {
       state.userHistoryPosts = action.payload;
     },
+    setUserRequestPostsData: (state, action) => {
+      state.userRequestPostsData = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -98,6 +102,7 @@ export const {
   setPostData,
   setUserData,
   setUserHistoryPosts,
+  setUserRequestPostsData,
 } = foodUnity.actions;
 
 export default foodUnity.reducer;

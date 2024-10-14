@@ -8,6 +8,7 @@ const {
   deleteFoodPost,
   updateFoodPost,
   userPostsHistory,
+  getUsersRequestPost,
 } = require("../controllers/food.controller");
 const upload = require("../middlewares/multer.middleware");
 const router = express.Router();
@@ -22,5 +23,6 @@ router
   .route("/updatefoodpost")
   .patch(verifyJwt, upload.single("foodImage"), updateFoodPost);
 router.route("/getUserPostHistory").get(verifyJwt, userPostsHistory);
+router.route("/getUsersRequestPost").get(verifyJwt, getUsersRequestPost);
 
 module.exports = router;

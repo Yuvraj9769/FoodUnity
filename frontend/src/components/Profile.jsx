@@ -17,6 +17,7 @@ import secureLocalStorage from "react-secure-storage";
 import { FaListAlt } from "react-icons/fa";
 import { AiOutlineHistory } from "react-icons/ai";
 import PropTypes from "prop-types";
+import { MdFeedback } from "react-icons/md";
 
 const Profile = ({ logout }) => {
   const userData = useSelector((state) => state.userData);
@@ -136,7 +137,7 @@ const Profile = ({ logout }) => {
         </Link>
       ) : (
         <Link
-          to="/foods/notifications"
+          to="/foods/requestsData"
           onClick={() => dispatch(setProfile(!profile))}
           className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
         >
@@ -163,6 +164,15 @@ const Profile = ({ logout }) => {
           Request History
         </Link>
       )}
+
+      <Link
+        to="/feedback"
+        onClick={() => dispatch(setProfile(!profile))}
+        className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
+      >
+        <MdFeedback />
+        Share Feedback
+      </Link>
       <p
         onClick={logout}
         className="flex items-center gap-4 text-lg text-center p-2 px-4 cursor-pointer rounded-3xl border border-[#cfcfcf] dark:hover:bg-slate-900 duration-500 hover:bg-slate-200"

@@ -58,13 +58,13 @@ const DonorsAllNotifications = () => {
             {notifications.map((notification, ind) => (
               <div
                 key={ind}
-                className="bg-white shadow-md rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
+                className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
               >
                 <div className="flex items-center justify-between w-full mb-1">
-                  <h2 className="text-xl font-semibold">
+                  <h2 className="text-xl font-semibold text-black dark:text-slate-50">
                     {notification.foodId.foodTitle}
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500  dark:text-slate-400">
                     {new Date(notification.createdAt).toLocaleString()}
                   </p>
                 </div>
@@ -73,10 +73,10 @@ const DonorsAllNotifications = () => {
                   alt="Food Image"
                   className="w-full h-48 object-cover object-center mb-2 rounded-md"
                 />
-                <p className="text-gray-600 mb-2 overflow-y-scroll h-[92px] scroller-display-none">
+                <p className="text-gray-600 mb-2 overflow-y-scroll h-[92px] dark:text-slate-50 scroller-display-none">
                   {notification.foodId.description}
                 </p>
-                <p className="text-gray-700 mb-1">
+                <p className="text-gray-700 mb-1 dark:text-slate-50">
                   <b>Requested by: {notification.requesterId.username}</b>
                 </p>
                 <div className="flex justify-around items-center w-full">

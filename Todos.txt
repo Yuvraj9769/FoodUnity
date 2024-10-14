@@ -1,5 +1,4 @@
-0)Just make request to show only requested food cards
-1) Make feedback form also give website email for any queries use useState not useRef.
+1) Make feedback form also give website email for any queries use useState.
 
 3)Reporting and Analytics:
 Donation Reports: Donors can generate reports on their donation history, including the quantity of food donated and the impact of their contributions.

@@ -204,6 +204,22 @@ const getUserPostHistory = async () => {
   }
 };
 
+const getUserRequestsPosts = async () => {
+  try {
+    const res = await axios.get(`${SERVER}/foods/getUsersRequestPost`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "User request post fetching failed";
+    throw new Error(errorMessage);
+  }
+};
+
 export {
   createFoodPost,
   getDonorPostedPosts,
@@ -217,4 +233,5 @@ export {
   deleteFoodPost,
   updateFoodPost,
   getUserPostHistory,
+  getUserRequestsPosts,
 };

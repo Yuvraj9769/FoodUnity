@@ -28,6 +28,8 @@ import UpdateProfile from "./components/UpdateProfile.jsx";
 import UpdatePassword from "./components/UpdatePassword.jsx";
 import UpdateFoodPostForm from "./components/UpdateFoodPostForm.jsx";
 import UserPostHistory from "./components/UserPostHistory.jsx";
+import UsersRequestsPosts from "./components/UsersRequestsPosts.jsx";
+import FeedbackForm from "./components/FeedbackForm.jsx";
 
 const router = createBrowserRouter([
   {
@@ -145,6 +147,18 @@ const router = createBrowserRouter([
             <UserPostHistory />
           </VerifyUser>
         ),
+      },
+      {
+        path: "/foods/requestsData",
+        element: (
+          <VerifyUser>
+            <UsersRequestsPosts />
+          </VerifyUser>
+        ),
+      },
+      {
+        path: "/feedback",
+        element: <FeedbackForm />,
       },
     ],
   },

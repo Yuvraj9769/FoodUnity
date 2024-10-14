@@ -1,6 +1,7 @@
 import { IoMdAdd } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 
 const Services = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
@@ -75,7 +76,7 @@ const Services = () => {
           </ul>
         </div>
       </div>
-      {isLoggedIn && (
+      {isLoggedIn && secureLocalStorage.getItem("donor") && (
         <Link
           to="/doPost"
           className="text-slate-50 text-lg bg-blue-700 px-4 py-2 rounded-lg outline-none border-none hover:bg-blue-800 self-center duration-200 inline-flex items-center gap-2 absolute top-3 right-8"

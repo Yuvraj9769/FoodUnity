@@ -367,6 +367,38 @@ const userPostsHistory = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, foodPosts, "ok"));
 });
 
+const getUsersRequestPost = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const requestData = await requestModel
+    .find({ requesterId: userId })
+    .populate(
+      "foodId",
+      "foodTitle description foodType expiryTime foodImage pickupTime contactName pickupOptions createdAt"
+    )
+    .select("status")
+    .lean();
+
+  if (!requestData) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  const postData = requestData
+    .map(({ foodId, ...rest }) => {
+      return {
+        ...rest,
+        ...foodId,
+      };
+    })
+    .filter((e) => e.status === "requested");
+
+  if (!postData || postData.length === 0) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, postData, "ok"));
+});
+
 module.exports = {
   createPost,
   getDonorsAllPosts,
@@ -375,4 +407,5 @@ module.exports = {
   deleteFoodPost,
   updateFoodPost,
   userPostsHistory,
+  getUsersRequestPost,
 };

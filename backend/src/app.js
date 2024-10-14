@@ -17,9 +17,11 @@ app.use(
 const userRoutes = require("./routes/user.routes");
 const foodRoutes = require("./routes/food.routes");
 const requestRoutes = require("./routes/request.routes");
+const userfeedback = require("./routes/feedback.routes");
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/foods", foodRoutes);
 app.use("/api/v1/request", requestRoutes);
+app.use("/api/v1/feedback", userfeedback);
 
 module.exports = app;
