@@ -4,6 +4,8 @@ const {
   showNotifications,
   getDonorsAllNotifications,
   sendRequestResponseMail,
+  searchNotification,
+  searchUserReqHistory,
 } = require("../controllers/request.controller");
 const verifyJwt = require("../middlewares/jwtVerify.middleware");
 const router = express.Router();
@@ -16,5 +18,7 @@ router
   .get(verifyJwt, getDonorsAllNotifications);
 
 router.route("/donor-req-activity").post(verifyJwt, sendRequestResponseMail);
+router.route("/searchnotif").post(verifyJwt, searchNotification);
+router.route("/searchreqhist").post(verifyJwt, searchUserReqHistory);
 
 module.exports = router;

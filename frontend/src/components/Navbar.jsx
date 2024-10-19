@@ -10,7 +10,13 @@ import Sidebar from "./Sidebar";
 import secureLocalStorage from "react-secure-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { searchDataQuery } from "../api/foodApi";
+import {
+  searchDataQuery,
+  searchNotification,
+  searchUserHistory,
+  searchUserRequestData,
+  serchPostForUser,
+} from "../api/foodApi";
 import {
   setIsLoggedIn,
   setDarkMode,
@@ -80,9 +86,65 @@ const Navbar = ({ setIsJWTExpired }) => {
   };
 
   const checkKey = async (e) => {
-    if (e.key === "Enter" && location.pathname === "/posts") {
+    if (
+      e.key === "Enter" &&
+      location.pathname === "/posts" &&
+      Object.keys(searchData.searchQuery).length !== 0
+    ) {
       try {
         const res = await searchDataQuery(searchData);
+        if (res.statusCode === 200 && res.success) {
+          dispatch(setSearchedData(res.data));
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    } else if (
+      e.key === "Enter" &&
+      location.pathname === "/foods/notifications" &&
+      Object.keys(searchData.searchQuery).length !== 0
+    ) {
+      try {
+        const res = await searchNotification(searchData);
+        if (res.statusCode === 200 && res.success) {
+          dispatch(setSearchedData(res.data));
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    } else if (
+      e.key === "Enter" &&
+      location.pathname === "/getposts" &&
+      Object.keys(searchData.searchQuery).length !== 0
+    ) {
+      try {
+        const res = await serchPostForUser(searchData);
+        if (res.statusCode === 200 && res.success) {
+          dispatch(setSearchedData(res.data));
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    } else if (
+      e.key === "Enter" &&
+      location.pathname === "/foods/requestsData" &&
+      Object.keys(searchData.searchQuery).length !== 0
+    ) {
+      try {
+        const res = await searchUserRequestData(searchData);
+        if (res.statusCode === 200 && res.success) {
+          dispatch(setSearchedData(res.data));
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    } else if (
+      e.key === "Enter" &&
+      location.pathname === "/postHistory" &&
+      Object.keys(searchData.searchQuery).length !== 0
+    ) {
+      try {
+        const res = await searchUserHistory(searchData);
         if (res.statusCode === 200 && res.success) {
           dispatch(setSearchedData(res.data));
         }
@@ -145,7 +207,12 @@ const Navbar = ({ setIsJWTExpired }) => {
             </NavLink>
           </li>
         ) : donor ? (
-          <li>
+          <li
+            onClick={() => {
+              dispatch(setSearchedData([]));
+              setSearchData({ searchQuery: "" });
+            }}
+          >
             <NavLink
               to="/posts"
               className={(e) => {
@@ -158,7 +225,12 @@ const Navbar = ({ setIsJWTExpired }) => {
             </NavLink>
           </li>
         ) : (
-          <li>
+          <li
+            onClick={() => {
+              dispatch(setSearchedData([]));
+              setSearchData({ searchQuery: "" });
+            }}
+          >
             <NavLink
               to="/getposts"
               className={(e) => {
@@ -207,7 +279,9 @@ const Navbar = ({ setIsJWTExpired }) => {
                       <TbLoader3 />
                     </p>
                   )}
-                  {profile && <Profile logout={logout} />}
+                  {profile && (
+                    <Profile logout={logout} setSearchData={setSearchData} />
+                  )}
                 </div>
               </div>
             )}

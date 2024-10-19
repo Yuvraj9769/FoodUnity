@@ -10,6 +10,8 @@ const {
   userPostsHistory,
   getUsersRequestPost,
   searchItem,
+  searchPostForUser,
+  searchUserRequestData,
 } = require("../controllers/food.controller");
 const upload = require("../middlewares/multer.middleware");
 const router = express.Router();
@@ -26,5 +28,7 @@ router
 router.route("/getUserPostHistory").get(verifyJwt, userPostsHistory);
 router.route("/getUsersRequestPost").get(verifyJwt, getUsersRequestPost);
 router.route("/searchfood").post(verifyJwt, searchItem);
+router.route("/searchforuser").post(verifyJwt, searchPostForUser);
+router.route("/searchrequest").post(verifyJwt, searchUserRequestData);
 
 module.exports = router;

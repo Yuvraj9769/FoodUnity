@@ -14,10 +14,13 @@ import secureLocalStorage from "react-secure-storage";
 import { FcAlarmClock } from "react-icons/fc";
 import calculateTimeDifferenceString from "../utils/calculateTimeDifferenceString";
 import getClockTime from "../utils/getClockTime";
+import { MdLocationOn } from "react-icons/md";
+import { MdDeliveryDining } from "react-icons/md";
 
 const FoodCardsUsers = () => {
   const dispatch = useDispatch();
   const postData = useSelector((state) => state.postData);
+  const searchedData = useSelector((state) => state.searchedData);
 
   const navigate = useNavigate();
 
@@ -65,9 +68,9 @@ const FoodCardsUsers = () => {
     <>
       {loading ? (
         <PageLoader />
-      ) : postData.length != 0 ? (
+      ) : searchedData.length !== 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4">
-          {postData.map((food, ind) => (
+          {searchedData.map((food, ind) => (
             <div
               className="max-w-sm rounded-lg overflow-hidden shadow-lg dark:shadow-gray-700 shadow-slate-800 bg-white dark:bg-gray-800"
               key={ind}
@@ -77,7 +80,7 @@ const FoodCardsUsers = () => {
                 alt="Food Image"
                 className="w-full h-48 object-cover object-center"
               />
-              <div className="px-6 py-4 h-[220px] flex flex-col items-start justify-between">
+              <div className="px-6 py-4 h-[260px] flex flex-col items-start justify-between">
                 <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                   {food.food.foodTitle}
                 </div>
@@ -108,8 +111,109 @@ const FoodCardsUsers = () => {
                     <FcAlarmClock className="text-xl" />
                   </span>
                 </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Location:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
+                    {food.food.pickupLocation}
+                    <MdLocationOn className="text-[22px] text-red-600" />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Delivery Options:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 capitalize ml-1 inline-flex items-center gap-2 ">
+                    {food.food.pickupOptions}
+                    <MdDeliveryDining className="text-[22px] text-blue-700" />
+                  </span>
+                </div>
               </div>
-              <div className="px-6 pt-4 pb-2 flex justify-between items-center w-full">
+              <div className="px-6 pt-2 pb-2 flex justify-between items-center w-full">
+                <span className="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  #
+                  {food.food.foodType.charAt(0).toUpperCase() +
+                    food.food.foodType.slice(1)}
+                </span>
+                <button
+                  onClick={() => sendReuest(food.food._id)}
+                  className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full ${
+                    searchedData[ind]?.requestStatus === "requested" ||
+                    searchedData[ind]?.requestStatus === "approved"
+                      ? "opacity-70 pointer-events-none"
+                      : ""
+                  }`}
+                >
+                  {searchedData[ind]?.requestStatus}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : postData.length != 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4">
+          {postData.map((food, ind) => (
+            <div
+              className="max-w-sm rounded-lg overflow-hidden shadow-lg dark:shadow-gray-700 shadow-slate-800 bg-white dark:bg-gray-800"
+              key={ind}
+            >
+              <img
+                src={food.food.foodImage}
+                alt="Food Image"
+                className="w-full h-48 object-cover object-center"
+              />
+              <div className="px-6 py-4 h-[310px] flex flex-col items-start justify-between">
+                <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
+                  {food.food.foodTitle}
+                </div>
+                <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll h-[92px] scroller-display-none">
+                  {food.food.description}
+                </p>
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-sm font-semibold text-black dark:text-slate-50">
+                    Posted By: {food.food.contactName}
+                  </span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400 inline-flex items-center gap-1">
+                    {calculateTimeDifferenceString(food.food.createdAt)?.split(
+                      "hrs"
+                    )[0] > 55
+                      ? "A few days old"
+                      : calculateTimeDifferenceString(food.food.createdAt) === 0
+                      ? "Just now"
+                      : calculateTimeDifferenceString(food.food.createdAt)}
+                    <LuFileClock />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Expires in:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2">
+                    {getClockTime(food.food.expiryTime)}
+                    <FcAlarmClock className="text-xl" />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Location:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
+                    {food.food.pickupLocation}
+                    <MdLocationOn className="text-[22px] text-red-600" />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Delivery Options:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 capitalize ml-1 inline-flex items-center gap-2 ">
+                    {food.food.pickupOptions}
+                    <MdDeliveryDining className="text-[22px] text-blue-700" />
+                  </span>
+                </div>
+              </div>
+              <div className="px-6 pt-2 pb-2 flex justify-between items-center w-full">
                 <span className="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
                   #
                   {food.food.foodType.charAt(0).toUpperCase() +

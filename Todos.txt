@@ -1,4 +1,4 @@
-0)Searching done but issue coming for non-vegetarian fix that and apply search for myrequest,history,etc.
+0)Add location and delivery in each cards, FoodCardsUser done.
 1)Take user location so in 10 km distace can get the data of foods.
 
 3)Reporting and Analytics:

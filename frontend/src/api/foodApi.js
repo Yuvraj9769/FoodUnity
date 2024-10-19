@@ -230,7 +230,73 @@ const searchDataQuery = async (data) => {
     });
     return res.data;
   } catch (error) {
-    const errorMessage = error.response.data.message || "Sorry error occured";
+    const errorMessage =
+      error.response.data.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+const searchNotification = async (data) => {
+  try {
+    const res = await axios.post(`${SERVER}/request/searchnotif`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error.response.data.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+const serchPostForUser = async (data) => {
+  try {
+    const res = await axios.post(`${SERVER}/foods/searchforuser`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error.response.data.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+const searchUserRequestData = async (data) => {
+  try {
+    const res = await axios.post(`${SERVER}/foods/searchrequest`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error.response.data.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+const searchUserHistory = async (data) => {
+  try {
+    const res = await axios.post(`${SERVER}/request/searchreqhist`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error.response.data.message || "Sorry something went wrong";
     throw new Error(errorMessage);
   }
 };
@@ -250,4 +316,8 @@ export {
   getUserPostHistory,
   getUserRequestsPosts,
   searchDataQuery,
+  searchNotification,
+  serchPostForUser,
+  searchUserRequestData,
+  searchUserHistory,
 };

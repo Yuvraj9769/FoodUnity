@@ -253,9 +253,101 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Request Status Update"));
 });
 
+const searchNotification = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.body;
+
+  if (!searchQuery) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Please provide a search"));
+  }
+
+  const searchData = await requestModel
+    .find({
+      $and: [
+        {
+          donorId: req.user._id,
+        },
+        {
+          status: "requested",
+        },
+      ],
+    })
+    .populate({
+      path: "foodId",
+      match: {
+        $or: [
+          {
+            foodTitle: { $regex: searchQuery, $options: "i" },
+          },
+          {
+            foodType: { $regex: `^${searchQuery}$`, $options: "i" },
+          },
+          {
+            pickupOptions: { $regex: searchQuery, $options: "i" },
+          },
+        ],
+      },
+      select: "-_id -quantity -pickupLocation -contactName -contactNumber",
+    });
+
+  const filteredResults = searchData.filter(
+    (item) => item.foodId !== null && !item.isDelete
+  );
+
+  if (!filteredResults || filteredResults.length === 0) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Sorry post not found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, filteredResults, "Ok"));
+});
+
+const searchUserReqHistory = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.body;
+
+  if (!searchQuery) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Please provide a search"));
+  }
+
+  let historyData = await requestModel
+    .find({
+      requesterId: req.user._id,
+    })
+    .populate({
+      path: "foodId",
+      match: {
+        $or: [
+          {
+            foodTitle: { $regex: searchQuery, $options: "i" },
+          },
+          {
+            foodType: { $regex: `^${searchQuery}$`, $options: "i" },
+          },
+        ],
+      },
+    })
+    .select("-createdAt -donorId -requesterId -updatedAt -_id -__v");
+
+  historyData = historyData.filter((item) => item.foodId !== null);
+
+  if (historyData.length === 0) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Sorry post not found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, historyData, "Ok"));
+});
+
 module.exports = {
   sendOrderMailRequest,
   showNotifications,
   getDonorsAllNotifications,
   sendRequestResponseMail,
+  searchNotification,
+  searchUserReqHistory,
 };

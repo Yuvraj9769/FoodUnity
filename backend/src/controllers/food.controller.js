@@ -106,7 +106,9 @@ const getDonorsAllPosts = asyncHandler(async (req, res) => {
 const getAllFoodPosts = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
-  const foods = await foodModel.find();
+  const foods = await foodModel.find({
+    isDelete: false,
+  });
 
   if (!foods) {
     return res
@@ -132,11 +134,16 @@ const getAllFoodPosts = asyncHandler(async (req, res) => {
     })
     .filter(({ requestStatus, food }) => {
       return (
-        requestStatus != "OTP Expired" &&
-        requestStatus != "approved" &&
-        moment().diff(moment(food.createdAt), "days") < 1
+        requestStatus != "OTP Expired" && requestStatus != "approved"
+        // && moment().diff(moment(food.createdAt), "days") < 1
       );
     });
+
+  if (foodsWithStatus.length === 0) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No food posts found"));
+  }
 
   res
     .status(200)
@@ -408,7 +415,7 @@ const searchItem = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Please provide a search"));
   }
 
-  const searchData = await foodModel.find({
+  let searchData = await foodModel.find({
     $or: [
       {
         foodTitle: { $regex: searchQuery, $options: "i" },
@@ -419,11 +426,123 @@ const searchItem = asyncHandler(async (req, res) => {
     ],
   });
 
-  if (!searchData) {
+  searchData = searchData.filter((item) => !item.isDelete);
+
+  if (!searchData || searchData.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
   return res.status(200).json(new ApiResponse(200, searchData, "Ok"));
+});
+
+const searchPostForUser = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.body;
+
+  if (!searchQuery) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Please provide a search"));
+  }
+
+  let foodPosts = await foodModel.find({
+    $and: [
+      {
+        isDelete: false,
+      },
+      {
+        $or: [
+          { foodTitle: { $regex: searchQuery, $options: "i" } },
+          { foodType: { $regex: `^${searchQuery}$`, $options: "i" } },
+        ],
+      },
+    ],
+  });
+
+  if (foodPosts.length === 0) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  const requests = await requestModel.find({ requesterId: req.user._id });
+
+  const requestStatusMap = {};
+
+  requests.forEach((request) => {
+    requestStatusMap[request.foodId.toString()] = request.status;
+  });
+
+  const foodsWithStatus = foodPosts
+    .map((food) => {
+      const requestStatus = requestStatusMap[food._id.toString()] || "request";
+      return {
+        food,
+        requestStatus,
+      };
+    })
+    .filter(({ requestStatus, food }) => {
+      return (
+        requestStatus != "OTP Expired" &&
+        requestStatus != "approved" &&
+        !food.isDelete
+        // && moment().diff(moment(food.createdAt), "days") < 1
+      );
+    });
+
+  if (foodsWithStatus.length === 0) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, foodsWithStatus, "Food Posts Fetched"));
+});
+
+const searchUserRequestData = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.body;
+
+  if (!searchQuery) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Please provide a search"));
+  }
+
+  let requestData = await requestModel
+    .find({
+      $and: [
+        {
+          requesterId: req.user._id,
+        },
+        {
+          status: "requested",
+        },
+      ],
+    })
+    .populate({
+      path: "foodId",
+      match: {
+        $or: [
+          {
+            foodTitle: { $regex: searchQuery, $options: "i" },
+          },
+          {
+            foodType: { $regex: `^${searchQuery}$`, $options: "i" },
+          },
+        ],
+      },
+      select: "-_id -quantity -pickupLocation -contactName -contactNumber",
+    })
+    .select("-createdAt -donorId -requesterId -updatedAt -_id -__v");
+
+  if (requestData.length === 0) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  requestData = requestData.filter((item) => item.foodId !== null);
+
+  if (requestData.length === 0) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, requestData, "Ok"));
 });
 
 module.exports = {
@@ -436,4 +555,6 @@ module.exports = {
   userPostsHistory,
   getUsersRequestPost,
   searchItem,
+  searchPostForUser,
+  searchUserRequestData,
 };

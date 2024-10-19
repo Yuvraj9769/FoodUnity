@@ -54,6 +54,7 @@ const RegisterUser = () => {
 
     if (!validator.isMobilePhone(mobNo.current.value)) {
       toast.error("Invalid Mobile Number");
+      return;
     }
 
     if (password.current.value !== confPassword.current.value) {

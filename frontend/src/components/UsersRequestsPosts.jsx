@@ -15,6 +15,8 @@ const UsersRequestsPosts = () => {
     (state) => state.userRequestPostsData
   );
 
+  const searchedData = useSelector((state) => state.searchedData);
+
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(true);
@@ -44,7 +46,72 @@ const UsersRequestsPosts = () => {
     <>
       {loading ? (
         <PageLoader />
-      ) : userRequestPostsData.length != 0 ? (
+      ) : searchedData.length !== 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4">
+          {searchedData.map(({ foodId }, ind) => (
+            <div
+              className="max-w-sm rounded-lg overflow-hidden shadow-lg dark:shadow-gray-700 shadow-slate-800 bg-white dark:bg-gray-800"
+              key={ind}
+            >
+              <img
+                src={foodId.foodImage}
+                alt="Food Image"
+                className="w-full h-48 object-cover object-center"
+              />
+              <div className="px-6 py-4 h-[220px] flex flex-col items-start justify-between">
+                <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
+                  {foodId.foodTitle}
+                </div>
+                <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll h-[92px] scroller-display-none">
+                  {foodId.description}
+                </p>
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-sm font-semibold text-black dark:text-slate-50">
+                    Posted By: {foodId.contactName}
+                  </span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400 inline-flex items-center gap-1">
+                    {calculateTimeDifferenceString(foodId.createdAt)?.split(
+                      "hrs"
+                    )[0] > 55
+                      ? "A few days old"
+                      : calculateTimeDifferenceString(foodId.createdAt) === 0
+                      ? "Just now"
+                      : calculateTimeDifferenceString(foodId.createdAt)}
+                    <LuFileClock />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Expires in:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2">
+                    {getClockTime(foodId.expiryTime)}
+                    <FcAlarmClock className="text-xl" />
+                  </span>
+                </div>
+              </div>
+              <div className="px-6 pt-4 pb-2 flex justify-between items-center w-full">
+                <span className="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  #
+                  {foodId.foodType.charAt(0).toUpperCase() +
+                    foodId.foodType.slice(1)}
+                </span>
+                <button
+                  className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full ${
+                    searchedData[ind]?.status === "requested" ||
+                    searchedData[ind]?.status === "approved" ||
+                    searchedData[ind]?.status === "OTP Expired"
+                      ? "opacity-70 pointer-events-none"
+                      : ""
+                  }`}
+                >
+                  {searchedData[ind]?.status}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : userRequestPostsData.length !== 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4">
           {userRequestPostsData.map((food, ind) => (
             <div

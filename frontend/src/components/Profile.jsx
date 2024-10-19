@@ -4,7 +4,11 @@ import { Link } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserData, setProfile } from "../features/foodUnity";
+import {
+  getUserData,
+  setProfile,
+  setSearchedData,
+} from "../features/foodUnity";
 import { MdEmail } from "react-icons/md";
 import { MdManageAccounts } from "react-icons/md";
 import axios from "axios";
@@ -19,7 +23,7 @@ import { AiOutlineHistory } from "react-icons/ai";
 import PropTypes from "prop-types";
 import { MdFeedback } from "react-icons/md";
 
-const Profile = ({ logout }) => {
+const Profile = ({ logout, setSearchData }) => {
   const userData = useSelector((state) => state.userData);
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.profile);
@@ -138,7 +142,11 @@ const Profile = ({ logout }) => {
       ) : (
         <Link
           to="/foods/requestsData"
-          onClick={() => dispatch(setProfile(!profile))}
+          onClick={() => {
+            dispatch(setProfile(!profile));
+            dispatch(setSearchedData([]));
+            setSearchData({ searchQuery: "" });
+          }}
           className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
         >
           <FaListAlt />
@@ -148,7 +156,11 @@ const Profile = ({ logout }) => {
       {secureLocalStorage.getItem("donor") ? (
         <Link
           to="/foods/VerifyOTP"
-          onClick={() => dispatch(setProfile(!profile))}
+          onClick={() => {
+            dispatch(setProfile(!profile));
+            dispatch(setSearchedData([]));
+            setSearchData({ searchQuery: "" });
+          }}
           className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
         >
           <RiLockPasswordFill />
@@ -157,7 +169,11 @@ const Profile = ({ logout }) => {
       ) : (
         <Link
           to="/postHistory"
-          onClick={() => dispatch(setProfile(!profile))}
+          onClick={() => {
+            dispatch(setProfile(!profile));
+            dispatch(setSearchedData([]));
+            setSearchData({ searchQuery: "" });
+          }}
           className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
         >
           <AiOutlineHistory />
@@ -186,6 +202,7 @@ const Profile = ({ logout }) => {
 
 Profile.propTypes = {
   logout: PropTypes.func.isRequired,
+  setSearchData: PropTypes.func.isRequired,
 };
 
 export default Profile;
