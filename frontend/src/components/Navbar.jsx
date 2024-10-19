@@ -9,12 +9,15 @@ import { FaBarsStaggered } from "react-icons/fa6";
 import Sidebar from "./Sidebar";
 import secureLocalStorage from "react-secure-storage";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { searchDataQuery } from "../api/foodApi";
 import {
   setIsLoggedIn,
   setDarkMode,
   setProfile,
   setSidebarVisible,
   setPostData,
+  setSearchedData,
 } from "../features/foodUnity";
 import { logoutUser } from "../api/userApi";
 
@@ -28,8 +31,14 @@ const Navbar = ({ setIsJWTExpired }) => {
   const userData = useSelector((state) => state.userData);
   const siderbarvisible = useSelector((state) => state.siderbarvisible);
   const postData = useSelector((state) => state.postData);
+  const searchedData = useSelector((state) => state.searchedData);
+
+  const location = useLocation();
 
   const [donor, setDonor] = useState(false);
+  const [searchData, setSearchData] = useState({
+    searchQuery: "",
+  });
 
   document.documentElement.className = darkMode ? "dark" : "light";
 
@@ -57,6 +66,30 @@ const Navbar = ({ setIsJWTExpired }) => {
 
   const getDataAndProfile = async () => {
     dispatch(setProfile(!profile));
+  };
+
+  const handleOnChange = (e) => {
+    const { value } = e.target;
+
+    if (searchedData.length !== 0 && value.length === 0) {
+      setSearchData({ searchQuery: "" });
+      dispatch(setSearchedData([]));
+    }
+
+    setSearchData((preData) => ({ ...preData, searchQuery: value }));
+  };
+
+  const checkKey = async (e) => {
+    if (e.key === "Enter" && location.pathname === "/posts") {
+      try {
+        const res = await searchDataQuery(searchData);
+        if (res.statusCode === 200 && res.success) {
+          dispatch(setSearchedData(res.data));
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   useEffect(() => {
@@ -144,6 +177,9 @@ const Navbar = ({ setIsJWTExpired }) => {
             <div className="flex items-center gap-3 w-full text-black rounded-md pr-2">
               <input
                 type="text"
+                value={searchData.searchQuery}
+                onChange={handleOnChange}
+                onKeyDown={checkKey}
                 placeholder="Search"
                 className="p-2 rounded-md border-none outline-none w-[320px] dark:bg-slate-800 duration-500  bg-slate-200 focus-within:ring-1 dark:focus-within:ring-blue-500 focus-within:ring-black group dark:text-slate-50 text-black"
               />

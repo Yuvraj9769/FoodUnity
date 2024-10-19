@@ -220,6 +220,21 @@ const getUserRequestsPosts = async () => {
   }
 };
 
+const searchDataQuery = async (data) => {
+  try {
+    const res = await axios.post(`${SERVER}/foods/searchfood`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    const errorMessage = error.response.data.message || "Sorry error occured";
+    throw new Error(errorMessage);
+  }
+};
+
 export {
   createFoodPost,
   getDonorPostedPosts,
@@ -234,4 +249,5 @@ export {
   updateFoodPost,
   getUserPostHistory,
   getUserRequestsPosts,
+  searchDataQuery,
 };

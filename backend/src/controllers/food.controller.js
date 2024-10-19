@@ -399,6 +399,33 @@ const getUsersRequestPost = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, postData, "ok"));
 });
 
+const searchItem = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.body;
+
+  if (!searchQuery) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Please provide a search"));
+  }
+
+  const searchData = await foodModel.find({
+    $or: [
+      {
+        foodTitle: { $regex: searchQuery, $options: "i" },
+      },
+      {
+        foodType: { $regex: `^${searchQuery}$`, $options: "i" },
+      },
+    ],
+  });
+
+  if (!searchData) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, searchData, "Ok"));
+});
+
 module.exports = {
   createPost,
   getDonorsAllPosts,
@@ -408,4 +435,5 @@ module.exports = {
   updateFoodPost,
   userPostsHistory,
   getUsersRequestPost,
+  searchItem,
 };

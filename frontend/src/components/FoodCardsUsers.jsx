@@ -89,7 +89,13 @@ const FoodCardsUsers = () => {
                     Posted By: {food.food.contactName}
                   </span>
                   <span className="text-sm text-gray-600 dark:text-gray-400 inline-flex items-center gap-1">
-                    {calculateTimeDifferenceString(food.food.createdAt)}
+                    {calculateTimeDifferenceString(food.food.createdAt)?.split(
+                      "hrs"
+                    )[0] > 55
+                      ? "A few days old"
+                      : calculateTimeDifferenceString(food.food.createdAt) === 0
+                      ? "Just now"
+                      : calculateTimeDifferenceString(food.food.createdAt)}
                     <LuFileClock />
                   </span>
                 </div>

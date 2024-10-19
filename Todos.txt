@@ -1,4 +1,5 @@
-1) Make feedback form also give website email for any queries use useState.
+0)Searching done but issue coming for non-vegetarian fix that and apply search for myrequest,history,etc.
+1)Take user location so in 10 km distace can get the data of foods.
 
 3)Reporting and Analytics:
 Donation Reports: Donors can generate reports on their donation history, including the quantity of food donated and the impact of their contributions.
