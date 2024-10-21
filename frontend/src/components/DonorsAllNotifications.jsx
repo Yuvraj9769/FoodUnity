@@ -6,6 +6,7 @@ import {
 import toast from "react-hot-toast";
 import PageLoader from "./PageLoader";
 import { useSelector } from "react-redux";
+import { MdDeliveryDining, MdLocationOn } from "react-icons/md";
 
 const DonorsAllNotifications = () => {
   const searchedData = useSelector((state) => state.searchedData);
@@ -59,7 +60,7 @@ const DonorsAllNotifications = () => {
             {searchedData.map((notification, ind) => (
               <div
                 key={ind}
-                className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
+                className="bg-white dark:bg-gray-800 shadow-md  rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
               >
                 <div className="flex items-center justify-between w-full mb-1">
                   <h2 className="text-xl font-semibold text-black dark:text-slate-50">
@@ -80,6 +81,26 @@ const DonorsAllNotifications = () => {
                 <p className="text-gray-700 mb-1 dark:text-slate-50">
                   <b>Requested by: {notification.requesterId.username}</b>
                 </p>
+
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Location:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
+                    {notification.foodId.pickupLocation}
+                    <MdLocationOn className="text-[22px] text-red-600" />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Delivery Options:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 capitalize ml-1 inline-flex items-center gap-2 ">
+                    {notification.foodId.pickupOptions}
+                    <MdDeliveryDining className="text-[22px] text-blue-700" />
+                  </span>
+                </div>
+
                 <div className="flex justify-around items-center w-full">
                   <button
                     className="bg-blue-600 hover:bg-blue-700 duration-500 text-white inline-flex items-center gap-2 font-bold py-2 px-4 rounded-full"
@@ -121,7 +142,7 @@ const DonorsAllNotifications = () => {
             {notifications.map((notification, ind) => (
               <div
                 key={ind}
-                className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
+                className="bg-white dark:bg-gray-800 shadow-md  rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
               >
                 <div className="flex items-center justify-between w-full mb-1">
                   <h2 className="text-xl font-semibold text-black dark:text-slate-50">
@@ -142,6 +163,26 @@ const DonorsAllNotifications = () => {
                 <p className="text-gray-700 mb-1 dark:text-slate-50">
                   <b>Requested by: {notification.requesterId.username}</b>
                 </p>
+
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Location:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
+                    {notification.foodId.pickupLocation}
+                    <MdLocationOn className="text-[22px] text-red-600" />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Delivery Options:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 capitalize ml-1 inline-flex items-center gap-2 ">
+                    {notification.foodId.pickupOptions}
+                    <MdDeliveryDining className="text-[22px] text-blue-700" />
+                  </span>
+                </div>
+
                 <div className="flex justify-around items-center w-full">
                   <button
                     className="bg-blue-600 hover:bg-blue-700 duration-500 text-white inline-flex items-center gap-2 font-bold py-2 px-4 rounded-full"

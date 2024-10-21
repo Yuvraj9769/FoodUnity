@@ -355,7 +355,7 @@ const userPostsHistory = asyncHandler(async (req, res) => {
     .find({ requesterId: userId })
     .populate(
       "foodId",
-      "foodTitle description foodType expiryTime foodImage pickupTime contactName pickupOptions createdAt"
+      "foodTitle description foodType expiryTime foodImage pickupTime contactName pickupLocation pickupOptions createdAt"
     )
     .select("status")
     .lean();
@@ -381,7 +381,7 @@ const getUsersRequestPost = asyncHandler(async (req, res) => {
     .find({ requesterId: userId })
     .populate(
       "foodId",
-      "foodTitle description foodType expiryTime foodImage pickupTime contactName pickupOptions createdAt"
+      "foodTitle description foodType expiryTime pickupLocation pickupOptions foodImage pickupTime contactName pickupOptions createdAt"
     )
     .select("status")
     .lean();
@@ -528,7 +528,7 @@ const searchUserRequestData = asyncHandler(async (req, res) => {
           },
         ],
       },
-      select: "-_id -quantity -pickupLocation -contactName -contactNumber",
+      select: "-_id -quantity -contactNumber",
     })
     .select("-createdAt -donorId -requesterId -updatedAt -_id -__v");
 

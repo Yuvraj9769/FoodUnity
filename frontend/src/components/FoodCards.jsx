@@ -9,7 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import PageLoader from "./PageLoader";
 import secureLocalStorage from "react-secure-storage";
 import { FcAlarmClock } from "react-icons/fc";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdDeliveryDining, MdLocationOn } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import { deleteFoodPost } from "../api/foodApi";
 import calculateTimeDifferenceString from "../utils/calculateTimeDifferenceString";
@@ -85,7 +85,7 @@ const FoodCards = () => {
                     alt="Food Image"
                     className="w-full h-48 object-cover object-center"
                   />
-                  <div className="px-6 py-4 h-[220px] flex flex-col items-start justify-between">
+                  <div className="px-6 py-4 h-[260px] flex flex-col items-start justify-between">
                     <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                       {e.foodTitle}
                     </div>
@@ -114,6 +114,25 @@ const FoodCards = () => {
                       <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2">
                         {getClockTime(e.expiryTime)}
                         <FcAlarmClock className="text-xl" />
+                      </span>
+                    </div>
+
+                    <div className="mt-2">
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                        Location:
+                      </span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
+                        {e.pickupLocation}
+                        <MdLocationOn className="text-[22px] text-red-600" />
+                      </span>
+                    </div>
+                    <div className="mt-2">
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                        Delivery Options:
+                      </span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300 capitalize ml-1 inline-flex items-center gap-2 ">
+                        {e.pickupOptions}
+                        <MdDeliveryDining className="text-[22px] text-blue-700" />
                       </span>
                     </div>
                   </div>
@@ -171,7 +190,7 @@ const FoodCards = () => {
                     alt="Food Image"
                     className="w-full h-48 object-cover object-center"
                   />
-                  <div className="px-6 py-4 h-[220px] flex flex-col items-start justify-between">
+                  <div className="px-6 py-4 h-[260px] flex flex-col items-start justify-between">
                     <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                       {e.foodTitle}
                     </div>
@@ -200,6 +219,25 @@ const FoodCards = () => {
                       <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2">
                         {getClockTime(e.expiryTime)}
                         <FcAlarmClock className="text-xl" />
+                      </span>
+                    </div>
+
+                    <div className="mt-2">
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                        Location:
+                      </span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
+                        {e.pickupLocation}
+                        <MdLocationOn className="text-[22px] text-red-600" />
+                      </span>
+                    </div>
+                    <div className="mt-2">
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                        Delivery Options:
+                      </span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300 capitalize ml-1 inline-flex items-center gap-2 ">
+                        {e.pickupOptions}
+                        <MdDeliveryDining className="text-[22px] text-blue-700" />
                       </span>
                     </div>
                   </div>

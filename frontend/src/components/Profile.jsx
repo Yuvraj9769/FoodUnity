@@ -133,7 +133,10 @@ const Profile = ({ logout, setSearchData }) => {
       {secureLocalStorage.getItem("donor") ? (
         <Link
           to="/foods/notifications"
-          onClick={() => dispatch(setProfile(!profile))}
+          onClick={() => {
+            dispatch(setSearchedData([]));
+            setSearchData({ searchQuery: "" });
+          }}
           className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
         >
           <IoMdNotifications />

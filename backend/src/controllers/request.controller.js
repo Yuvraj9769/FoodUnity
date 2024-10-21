@@ -104,6 +104,8 @@ const showNotifications = asyncHandler(async (req, res) => {
         foodTitle: foodItem.foodTitle,
         foodDescription: foodItem.description,
         uname: user.username,
+        pickupOptions: foodItem.pickupOptions,
+        pickupLocation: foodItem.pickupLocation,
         requestCreateAt: reqData.createdAt,
         email: user.email,
       },
@@ -127,7 +129,7 @@ const getDonorsAllNotifications = asyncHandler(async (req, res) => {
     .populate({
       path: "foodId",
       select:
-        "-quantity -pickupLocation -pickupTime -contactName -contactNumber -pickupOptions -userId -status",
+        "-quantity -pickupTime -contactName -contactNumber -userId -status",
     })
     .select("-donorId -requesterId -status -updatedAt")
     .populate({
@@ -288,8 +290,9 @@ const searchNotification = asyncHandler(async (req, res) => {
           },
         ],
       },
-      select: "-_id -quantity -pickupLocation -contactName -contactNumber",
-    });
+      select: "-_id -quantity -contactName -contactNumber",
+    })
+    .populate("requesterId", "username");
 
   const filteredResults = searchData.filter(
     (item) => item.foodId !== null && !item.isDelete

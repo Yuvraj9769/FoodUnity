@@ -9,6 +9,7 @@ import getClockTime from "../utils/getClockTime";
 import { LuFileClock } from "react-icons/lu";
 import { FcAlarmClock } from "react-icons/fc";
 import { setUserRequestPostsData } from "../features/foodUnity";
+import { MdDeliveryDining, MdLocationOn } from "react-icons/md";
 
 const UsersRequestsPosts = () => {
   const userRequestPostsData = useSelector(
@@ -58,7 +59,7 @@ const UsersRequestsPosts = () => {
                 alt="Food Image"
                 className="w-full h-48 object-cover object-center"
               />
-              <div className="px-6 py-4 h-[220px] flex flex-col items-start justify-between">
+              <div className="px-6 py-4 h-[260px] flex flex-col items-start justify-between">
                 <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                   {foodId.foodTitle}
                 </div>
@@ -87,6 +88,25 @@ const UsersRequestsPosts = () => {
                   <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2">
                     {getClockTime(foodId.expiryTime)}
                     <FcAlarmClock className="text-xl" />
+                  </span>
+                </div>
+
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Location:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
+                    {foodId.pickupLocation}
+                    <MdLocationOn className="text-[22px] text-red-600" />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Delivery Options:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 capitalize ml-1 inline-flex items-center gap-2 ">
+                    {foodId.pickupOptions}
+                    <MdDeliveryDining className="text-[22px] text-blue-700" />
                   </span>
                 </div>
               </div>
@@ -123,7 +143,7 @@ const UsersRequestsPosts = () => {
                 alt="Food Image"
                 className="w-full h-48 object-cover object-center"
               />
-              <div className="px-6 py-4 h-[220px] flex flex-col items-start justify-between">
+              <div className="px-6 py-4 h-[260px] flex flex-col items-start justify-between">
                 <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                   {food.foodTitle}
                 </div>
@@ -152,6 +172,25 @@ const UsersRequestsPosts = () => {
                   <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2">
                     {getClockTime(food.expiryTime)}
                     <FcAlarmClock className="text-xl" />
+                  </span>
+                </div>
+
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Location:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
+                    {food.pickupLocation}
+                    <MdLocationOn className="text-[22px] text-red-600" />
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Delivery Options:
+                  </span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 capitalize ml-1 inline-flex items-center gap-2 ">
+                    {food.pickupOptions}
+                    <MdDeliveryDining className="text-[22px] text-blue-700" />
                   </span>
                 </div>
               </div>

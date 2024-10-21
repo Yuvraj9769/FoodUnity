@@ -151,6 +151,13 @@ const Navbar = ({ setIsJWTExpired }) => {
       } catch (error) {
         toast.error(error.message);
       }
+    } else if (
+      e.key === "Enter" &&
+      location.pathname.startsWith("/foods/notifications/") &&
+      location.pathname.split("/foods/notifications/ ").length === 1 &&
+      Object.keys(searchData.searchQuery).length !== 0
+    ) {
+      toast.error("Search is unavailable, there's only one post.");
     }
   };
 
