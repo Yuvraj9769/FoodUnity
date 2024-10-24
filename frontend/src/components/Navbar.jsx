@@ -322,7 +322,7 @@ const Navbar = ({ setIsJWTExpired }) => {
         </li>
       </ul>
 
-      <Sidebar logout={logout} />
+      <Sidebar logout={logout} setSearchData={setSearchData} />
       <button
         onClick={() => dispatch(setSidebarVisible(!siderbarvisible))}
         className="sidebtn text-red-600 text-2xl border border-[#dadada] rounded px-2 py-1"

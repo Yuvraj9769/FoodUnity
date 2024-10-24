@@ -1,17 +1,30 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ImCancelCircle } from "react-icons/im";
-import { MdEmail, MdLogout, MdManageAccounts } from "react-icons/md";
+import {
+  MdEmail,
+  MdFeedback,
+  MdLogout,
+  MdManageAccounts,
+} from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { setDarkMode, setSidebarVisible } from "../features/foodUnity";
-import { IoMdCamera } from "react-icons/io";
-import { IoSettings } from "react-icons/io5";
-import { RiFileEditFill } from "react-icons/ri";
+import {
+  setSearchedData,
+  setSidebarVisible,
+  setUserData,
+} from "../features/foodUnity";
+import { IoMdCamera, IoMdNotifications } from "react-icons/io";
 import axios from "axios";
 import { SERVER } from "../utils/server";
 import { TbLoader3 } from "react-icons/tb";
+import { toast } from "react-hot-toast";
+import PropTypes from "prop-types";
+import { RiLockPasswordFill } from "react-icons/ri";
+import secureLocalStorage from "react-secure-storage";
+import { FaListAlt } from "react-icons/fa";
+import { AiOutlineHistory } from "react-icons/ai";
 
-const Sidebar = ({ logout }) => {
+const Sidebar = ({ logout, setSearchData }) => {
   const siderbarvisible = useSelector((state) => state.siderbarvisible);
   const darkMode = useSelector((state) => state.darkMode);
   const userData = useSelector((state) => state.userData);
@@ -39,8 +52,9 @@ const Sidebar = ({ logout }) => {
         }
       );
 
+      console.log(response);
+
       if (response.data.success) {
-        // dispatch(getUserData());
         toast.success(response.data.message);
       }
 
@@ -71,14 +85,17 @@ const Sidebar = ({ logout }) => {
           </Link>
           <p
             className="text-4xl text-red-600"
-            onClick={() => dispatch(setSidebarVisible())}
+            onClick={() => {
+              dispatch(setSidebarVisible(!siderbarvisible));
+              setSearchData({ searchQuery: "" });
+            }}
           >
             <ImCancelCircle />
           </p>
         </div>
       </div>
       <div
-        className="bg-slate-50 dark:bg-slate-950 font-semibold text-black dark:text-slate-50 p-6 h-auto rounded-xl border border-[#dadada] flex flex-col items-start gap-6 w-[95%]"
+        className="bg-slate-50 dark:bg-slate-950 font-semibold text-black dark:text-slate-50 p-6 h-auto rounded-xl border border-[#dadada] flex flex-col items-start gap-[14px] w-[95%]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="font-semibold text-3xl h-[80px] w-[80px] rounded-full inline-flex items-center justify-center relative mb-2">
@@ -87,7 +104,7 @@ const Sidebar = ({ logout }) => {
               <TbLoader3 />
             </span>
           ) : (
-            <div className="w-full rounded-full h-[75px] bg-red-600 cursor-pointer overflow-hidden inline-flex items-center justify-center">
+            <div className="w-full rounded-full h-[75px] cursor-pointer overflow-hidden inline-flex items-center justify-center">
               <img
                 src={userData?.profilePic}
                 onClick={changeProfilePic}
@@ -127,24 +144,81 @@ const Sidebar = ({ logout }) => {
           <MdManageAccounts />
           Manage your account
         </Link>
+
+        {secureLocalStorage.getItem("donor") ? (
+          <Link
+            to="/foods/notifications"
+            onClick={() => {
+              dispatch(setSearchedData([]));
+              dispatch(setSidebarVisible(!siderbarvisible));
+              setSearchData({ searchQuery: "" });
+            }}
+            className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
+          >
+            <IoMdNotifications />
+            Notifications
+          </Link>
+        ) : (
+          <Link
+            to="/foods/requestsData"
+            onClick={() => {
+              dispatch(setSearchedData([]));
+              dispatch(setSidebarVisible(!siderbarvisible));
+              setSearchData({ searchQuery: "" });
+            }}
+            className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
+          >
+            <FaListAlt />
+            My Requests
+          </Link>
+        )}
+        {secureLocalStorage.getItem("donor") ? (
+          <Link
+            to="/foods/VerifyOTP"
+            onClick={() => {
+              dispatch(setSearchedData([]));
+              dispatch(setSidebarVisible(!siderbarvisible));
+              setSearchData({ searchQuery: "" });
+            }}
+            className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
+          >
+            <RiLockPasswordFill />
+            OTP Verification
+          </Link>
+        ) : (
+          <Link
+            to="/postHistory"
+            onClick={() => {
+              dispatch(setSearchedData([]));
+              dispatch(setSidebarVisible(!siderbarvisible));
+              setSearchData({ searchQuery: "" });
+            }}
+            className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
+          >
+            <AiOutlineHistory />
+            Request History
+          </Link>
+        )}
+
         <Link
-          to="/setting"
-          onClick={() => dispatch(setSidebarVisible(!siderbarvisible))}
+          to="/feedback"
+          onClick={() => {
+            dispatch(setSidebarVisible(!siderbarvisible));
+            setSearchData({ searchQuery: "" });
+          }}
           className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
         >
-          <IoSettings />
-          Settings
+          <MdFeedback />
+          Share Feedback
         </Link>
-        <Link
-          to="/activity"
-          onClick={() => dispatch(setSidebarVisible(!siderbarvisible))}
-          className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
-        >
-          <RiFileEditFill />
-          Post & Activity
-        </Link>
+
         <p
-          onClick={logout}
+          onClick={() => {
+            logout();
+            dispatch(setSidebarVisible(!siderbarvisible));
+            dispatch(setUserData([]));
+            setSearchData({ searchQuery: "" });
+          }}
           className="flex items-center gap-4 text-lg text-center p-2 px-4 cursor-pointer rounded-3xl border border-[#cfcfcf] dark:hover:bg-slate-900 duration-500 hover:bg-slate-200"
         >
           <MdLogout />
@@ -153,6 +227,11 @@ const Sidebar = ({ logout }) => {
       </div>
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  logout: PropTypes.func.isRequired,
+  setSearchData: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

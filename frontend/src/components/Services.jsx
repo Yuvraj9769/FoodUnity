@@ -9,7 +9,17 @@ const Services = () => {
   return (
     <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen relative">
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4">Services Offered</h1>
+        <div className=" w-full inline-flex flex-col sm:flex-row justify-between items-center my-5 sm:my-2">
+          <h1 className="text-3xl font-bold mb-4">Services Offered</h1>
+          {isLoggedIn && secureLocalStorage.getItem("donor") && (
+            <Link
+              to="/doPost"
+              className="text-slate-50 text-lg bg-blue-700 px-4 py-2 rounded-lg outline-none border-none hover:bg-blue-800 self-center duration-200 inline-flex items-center gap-2"
+            >
+              <IoMdAdd /> Create
+            </Link>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
@@ -76,14 +86,6 @@ const Services = () => {
           </ul>
         </div>
       </div>
-      {isLoggedIn && secureLocalStorage.getItem("donor") && (
-        <Link
-          to="/doPost"
-          className="text-slate-50 text-lg bg-blue-700 px-4 py-2 rounded-lg outline-none border-none hover:bg-blue-800 self-center duration-200 inline-flex items-center gap-2 absolute top-3 right-8"
-        >
-          <IoMdAdd /> Create
-        </Link>
-      )}
     </div>
   );
 };

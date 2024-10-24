@@ -26,6 +26,7 @@ import {
   setSearchedData,
 } from "../features/foodUnity";
 import { logoutUser } from "../api/userApi";
+import Profile from "../../../frontend/src/components/Profile";
 
 const Navbar = ({ setIsJWTExpired }) => {
   const navigate = useNavigate();

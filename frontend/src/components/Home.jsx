@@ -9,7 +9,16 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white relative rounded-md">
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4">Welcome to FoodUnity</h1>
+        <div className=" w-full inline-flex flex-col sm:flex-row justify-between items-center my-5 sm:my-2">
+          <h1 className="text-3xl font-bold mb-4">Welcome to FoodUnity</h1>
+          {isLoggedIn && userData.role === "donor" && (
+            <Link to="/doPost">
+              <button className="text-slate-50 text-lg bg-blue-700 px-4 py-2 rounded-lg outline-none border-none hover:bg-blue-800 self-center duration-200 inline-flex items-center gap-2">
+                <IoMdAdd /> Create
+              </button>
+            </Link>
+          )}
+        </div>
         <p className="mb-4">
           FoodUnity is your platform to bridge the gap between surplus food and
           those in need. Whether you have excess food to share or are looking
@@ -90,13 +99,6 @@ const Home = () => {
           community.
         </p>
       </div>
-      {isLoggedIn && userData.role === "donor" && (
-        <Link to="/doPost">
-          <button className="text-slate-50 text-lg bg-blue-700 px-4 py-2 rounded-lg outline-none border-none hover:bg-blue-800 self-center duration-200 inline-flex items-center gap-2 absolute top-3 right-8">
-            <IoMdAdd /> Create
-          </button>
-        </Link>
-      )}
     </div>
   );
 };

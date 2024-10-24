@@ -42,7 +42,7 @@ const VerifyFoodPostOTP = () => {
   };
 
   return (
-    <div className="bg-slate-50 sm:w-[380px] w-[90%] flex flex-col items-center gap-5 p-4 rounded-md shadow-lg shadow-gray-500 dark:shadow-slate-600 my-8">
+    <div className="bg-slate-50 sm:w-[380px] flex flex-col items-center gap-5 p-4 rounded-md shadow-lg shadow-gray-500 dark:shadow-slate-600 my-8 w-[85vw] mx-auto">
       {Object.keys(OTPVerifiedDet).length === 0 ? (
         <>
           {!loading ? (

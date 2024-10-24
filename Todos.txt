@@ -1,3 +1,4 @@
+VIP = sidebar working for mobile with design and functionality.
 0) Working on dashboard.
 1)Take user location so in 10 km distace can get the data of foods.
 

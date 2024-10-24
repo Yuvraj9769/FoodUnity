@@ -89,7 +89,7 @@ const UpdateProfile = () => {
       ) : (
         <form
           onSubmit={updateData}
-          className="flex flex-col items-center gap-5 border border-[#dadada] overflow-hidden w-[95%] sm:w-[440px] rounded-lg pb-4 text-slate-50"
+          className="flex flex-col items-center gap-5 border border-[#dadada] overflow-hidden w-[85vw] sm:w-[440px] rounded-lg pb-4 text-slate-50"
         >
           <h1 className="bg-gradient-to-r from-[#4A57CE] to-[#B151C2] text-4xl lg:text-5xl font-bold text-slate-50 p-2 inline-flex items-center justify-center w-full h-[135px] rounded-tl-lg rounded-tr-lg">
             Update Form

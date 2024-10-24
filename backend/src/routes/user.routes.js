@@ -10,8 +10,10 @@ const {
   resetPassword,
   updateProfile,
   ChangePassword,
+  updateProfilePic,
 } = require("../controllers/user.controller");
 const verifyJwt = require("../middlewares/jwtVerify.middleware");
+const upload = require("../middlewares/multer.middleware");
 
 const router = require("express").Router();
 
@@ -27,6 +29,9 @@ router.route("/getData").get(verifyJwt, userData);
 router.route("/logout").get(verifyJwt, logoutUser);
 router.route("/location").post(verifyJwt, getUserLocation);
 router.route("/updateProfile").patch(verifyJwt, updateProfile);
+router
+  .route("/updateProfilePic")
+  .patch(verifyJwt, upload.single("profilePic"), updateProfilePic);
 router.route("/changePassword").patch(verifyJwt, ChangePassword);
 
 module.exports = router;

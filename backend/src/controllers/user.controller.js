@@ -453,40 +453,6 @@ const ChangePassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Password updated successfully"));
 });
 
-// Sample output : -
-// {
-//   documentation: 'https://opencagedata.com/api',
-//   licenses: [
-//     {
-//       name: 'see attribution guide',
-//       url: 'https://opencagedata.com/credits'
-//     }
-//   ],
-//   rate: { limit: 2500, remaining: 2498, reset: 1719878400 },
-//   results: [
-//     {
-//       annotations: [Object],
-//       bounds: [Object],
-//       components: [Object],
-//       confidence: 9,
-//       distance_from_q: [Object],
-//       formatted: 'Santa Cruz – Chembur Link Road, Zone 5, Mumbai - 400070, Maharashtra, India',
-//       geometry: [Object]
-//     }
-//   ],
-//   status: { code: 200, message: 'OK' },
-//   stay_informed: {
-//     blog: 'https://blog.opencagedata.com',
-//     mastodon: 'https://en.osm.town/@opencage'
-//   },
-//   thanks: 'For using an OpenCage API',
-//   timestamp: {
-//     created_http: 'Mon, 01 Jul 2024 16:27:42 GMT',
-//     created_unix: 1719851262
-//   },
-//   total_results: 1
-// }
-
 module.exports = {
   registerUser,
   loginUser,
