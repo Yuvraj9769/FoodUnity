@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { IoMdCamera } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
@@ -22,14 +22,16 @@ import { FaListAlt } from "react-icons/fa";
 import { AiOutlineHistory } from "react-icons/ai";
 import PropTypes from "prop-types";
 import { MdFeedback } from "react-icons/md";
+import searchContext from "../store/searchContext";
 
-const Profile = ({ logout, setSearchData }) => {
+const Profile = ({ logout }) => {
   const userData = useSelector((state) => state.userData);
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.profile);
   const profilePicChange = useRef("");
 
   const [loader, setLoader] = useState(false);
+  const { setSearchData } = useContext(searchContext);
 
   const changeProfilePic = () => {
     profilePicChange.current.click();
@@ -205,7 +207,6 @@ const Profile = ({ logout, setSearchData }) => {
 
 Profile.propTypes = {
   logout: PropTypes.func.isRequired,
-  setSearchData: PropTypes.func.isRequired,
 };
 
 export default Profile;

@@ -7,8 +7,11 @@ import checkStringLowerCase from "../utils/stringLowerChecker";
 import registerDataChecker from "../utils/registerChecker";
 import Loader from "./Loader";
 import validator from "validator";
-import { registerUser } from "../api/userApi";
+import { getuserLocationWhileRegister, registerUser } from "../api/userApi";
 import { IoMdArrowDropdown } from "react-icons/io";
+import handlePermissionRequest from "../utils/getUserLocation";
+import { setLocation } from "../features/foodUnity";
+import { useDispatch, useSelector } from "react-redux";
 
 const RegisterUser = () => {
   const navigate = useNavigate();
@@ -20,12 +23,32 @@ const RegisterUser = () => {
   const confPassword = useRef("");
   const userType = useRef("");
 
+  const dispatch = useDispatch();
+
   const [disPassword, setDispassword] = useState({
     password: false,
     confPassword: false,
   });
 
+  const [locationPoints, setLocationPoints] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+
+  const location = useSelector((state) => state.location);
+
   const [loading, setLoading] = useState(false);
+
+  const getUserCurrentLocation = async () => {
+    try {
+      const res = await handlePermissionRequest();
+      const locationData = await getuserLocationWhileRegister(res);
+      dispatch(setLocation(locationData.data));
+      setLocationPoints(res);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   const register = async (e) => {
     e.preventDefault();
@@ -68,6 +91,11 @@ const RegisterUser = () => {
       return;
     }
 
+    if (!location || location.trim() === "") {
+      toast.error("Please provide location");
+      return;
+    }
+
     setLoading(true);
 
     const data = {
@@ -77,6 +105,7 @@ const RegisterUser = () => {
       mobNo: Number.parseInt(mobNo.current.value),
       password: password.current.value,
       userType: userType.current.value,
+      location: locationPoints,
     };
 
     try {
@@ -168,7 +197,7 @@ const RegisterUser = () => {
               className="text-black text-base outline-none border-none rounded-md p-2 w-full sm:text-lg lg:text-base"
             />
           </div>
-          <div className="relative w-full text-black">
+          <div className="relative w-full text-slate-50">
             <label
               htmlFor="userType"
               className="block font-semibold text-lg mb-1"
@@ -180,7 +209,7 @@ const RegisterUser = () => {
               required
               defaultValue="Select User Type"
               ref={userType}
-              className="outline-none border appearance-none border-[#dadada] rounded-md w-full p-3 text-base sm:text-lg lg:text-base"
+              className="outline-none border text-black appearance-none border-[#dadada] rounded-md w-full p-3 text-base sm:text-lg lg:text-base"
             >
               <option disabled>Select User Type</option>
               <option value="donor">Donor</option>
@@ -190,6 +219,24 @@ const RegisterUser = () => {
               <IoMdArrowDropdown />
             </p>
           </div>
+
+          <div className="flex flex-col w-full gap-2 font-semibold">
+            <label htmlFor="pickupLocation">Pickup Location:</label>
+            {location ? (
+              <button className="bg-blue-500 pointer-events-none opacity-70 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md focus:outline-none">
+                {location}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={getUserCurrentLocation}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md focus:outline-none"
+              >
+                Get Current Location
+              </button>
+            )}
+          </div>
+
           <div className="flex flex-col items-start gap-2 w-full font-semibold text-lg relative">
             <label>Password:</label>
             <input

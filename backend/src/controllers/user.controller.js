@@ -27,7 +27,8 @@ const generateAccessTokenForAllTime = async (id, rememberme) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, fullName, password, mobNo, userType } = req.body;
+  const { username, email, fullName, password, mobNo, userType, location } =
+    req.body;
 
   if (
     [username, email, fullName, password, userType].some(
@@ -43,6 +44,12 @@ const registerUser = asyncHandler(async (req, res) => {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Mobile number is required"));
+  }
+
+  if (!location) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Location is required"));
   }
 
   const existingUser = await userModel.findOne({
@@ -74,6 +81,10 @@ const registerUser = asyncHandler(async (req, res) => {
     mobileNumber: mobNo,
     password,
     role: userType,
+    pickupCoordinates: {
+      type: "Point",
+      coordinates: [location.latitude, location.longitude],
+    },
   });
 
   const createdUser = await userModel
@@ -371,6 +382,12 @@ const updateProfile = asyncHandler(async (req, res) => {
 const getUserLocation = asyncHandler(async (req, res) => {
   const { lat, long } = req.body;
 
+  if (!lat || !long) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Latitude and Longitude are required"));
+  }
+
   let userLocationData = null;
 
   try {
@@ -388,7 +405,15 @@ const getUserLocation = asyncHandler(async (req, res) => {
 
     userLocationData = city;
   } catch (error) {
-    console.error("Error : ", error);
+    return res
+      .status(500)
+      .json(
+        new ApiResponse(
+          500,
+          null,
+          error?.message || "Sorry something went wrong"
+        )
+      );
   }
 
   if (!userLocationData || userLocationData === "City not found")
@@ -398,14 +423,56 @@ const getUserLocation = asyncHandler(async (req, res) => {
 
   const user = await userModel.findById(req.user._id);
 
-  if (Object.keys(user.locationCoordinates).length === 0) {
-    user.locationCoordinates = {
-      lat: lat,
-      long: long,
-    };
+  if (user.pickupCoordinates.coordinates.length === 0) {
+    user.pickupCoordinates.coordinates = [lat, long];
 
     await user.save({ validateBeforeSave: false });
   }
+
+  return res.status(200).json(new ApiResponse(200, userLocationData));
+});
+
+const getUserLocationWhileRegister = asyncHandler(async (req, res) => {
+  const { latitude, longitude } = req.body;
+
+  if (!latitude || !longitude) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Latitude and Longitude are required"));
+  }
+
+  let userLocationData = null;
+
+  try {
+    const response = await axios.get(
+      `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${process.env.MAP_API_KEY}`
+    );
+
+    const components = response.data.results[0].components;
+    const city =
+      components.suburb ||
+      components.city ||
+      components.town ||
+      components.village ||
+      "City not found";
+
+    userLocationData = city;
+  } catch (error) {
+    return res
+      .status(500)
+      .json(
+        new ApiResponse(
+          500,
+          null,
+          error?.message || "Sorry something went wrong"
+        )
+      );
+  }
+
+  if (!userLocationData || userLocationData === "City not found")
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Sorry location not found"));
 
   return res.status(200).json(new ApiResponse(200, userLocationData));
 });
@@ -466,4 +533,5 @@ module.exports = {
   getUserLocation,
   checkIsLogin,
   ChangePassword,
+  getUserLocationWhileRegister,
 };

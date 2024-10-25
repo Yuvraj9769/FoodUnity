@@ -154,6 +154,22 @@ const changePassword = async (data) => {
   }
 };
 
+const getuserLocationWhileRegister = async (data) => {
+  try {
+    const res = await axios.post(`${SERVER}/users/getLocation`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
 export {
   logoutUser,
   registerUser,
@@ -164,4 +180,5 @@ export {
   updatePassword,
   updateProfileData,
   changePassword,
+  getuserLocationWhileRegister,
 };

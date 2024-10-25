@@ -11,6 +11,7 @@ const {
   updateProfile,
   ChangePassword,
   updateProfilePic,
+  getUserLocationWhileRegister,
 } = require("../controllers/user.controller");
 const verifyJwt = require("../middlewares/jwtVerify.middleware");
 const upload = require("../middlewares/multer.middleware");
@@ -22,6 +23,7 @@ router.route("/loginUser").post(loginUser);
 router.route("/sendMail").post(sendForgetPasswordMail);
 router.route("/ispassword-reset-token-valid").post(checkTokenExipry);
 router.route("/resetPassword").post(resetPassword);
+router.route("/getLocation").post(getUserLocationWhileRegister);
 
 //secured routes: -
 router.route("/checkislogin").get(verifyJwt, checkIsLogin);

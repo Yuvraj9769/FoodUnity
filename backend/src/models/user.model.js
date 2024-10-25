@@ -46,15 +46,25 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "notification",
     },
-    locationCoordinates: {
-      type: {},
-      default: {},
+    pickupCoordinates: {
+      type: {
+        type: String,
+        default: "Point",
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
     },
     passwordResetToken: String,
     passwordResetExpires: Date,
   },
   { timestamps: true }
 );
+
+// Create a 2dsphere index on pickupCoordinates
+userSchema.index({ pickupCoordinates: "2dsphere" });
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

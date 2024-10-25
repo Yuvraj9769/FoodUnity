@@ -301,6 +301,22 @@ const searchUserHistory = async (data) => {
   }
 };
 
+const getFifteenKMPosts = async () => {
+  try {
+    const res = await axios.get(`${SERVER}/foods/getFiltredPosts`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    const errorMessage =
+      error.response.data.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
 export {
   createFoodPost,
   getDonorPostedPosts,
@@ -320,4 +336,5 @@ export {
   serchPostForUser,
   searchUserRequestData,
   searchUserHistory,
+  getFifteenKMPosts,
 };

@@ -55,6 +55,21 @@ const createPost = asyncHandler(async (req, res) => {
       );
   }
 
+  const response = await fetch(
+    `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+      pickupLocation
+    )}&key=${process.env.MAP_API_KEY}`
+  );
+
+  const data = await response.json();
+  const { lat, lng } = data.results[0].geometry;
+
+  if (!lat || !lng) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Invalid pickup location"));
+  }
+
   const foodPost = await foodModel.create({
     foodTitle,
     description,
@@ -62,6 +77,10 @@ const createPost = asyncHandler(async (req, res) => {
     foodType,
     expiryTime,
     pickupLocation,
+    pickupCoordinates: {
+      type: "Point", // GeoJSON type
+      coordinates: [lng, lat],
+    },
     pickupTime,
     contactName,
     contactNumber,
@@ -545,6 +564,37 @@ const searchUserRequestData = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, requestData, "Ok"));
 });
 
+const getFifteenKMPosts = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const user = await userModel.findById(userId);
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  const distanceInKM = 15;
+
+  console.log();
+
+  const nearbyPosts = await foodModel.find({
+    pickupCoordinates: {
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates: [
+            user.pickupCoordinates.coordinates[0],
+            user.pickupCoordinates.coordinates[1],
+          ],
+        },
+        $maxDistance: distanceInKM * 1000,
+      },
+    },
+  });
+
+  console.log(JSON.stringify(nearbyPosts, null, 2));
+});
+
 module.exports = {
   createPost,
   getDonorsAllPosts,
@@ -557,4 +607,5 @@ module.exports = {
   searchItem,
   searchPostForUser,
   searchUserRequestData,
+  getFifteenKMPosts,
 };

@@ -28,6 +28,18 @@ const foodSchema = new mongoose.Schema(
       type: {},
       required: true,
     },
+    // Update pickupLocation to a GeoJSON format
+    pickupCoordinates: {
+      type: {
+        type: String,
+        default: "Point",
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
+    },
     foodImage: {
       type: String,
       required: true,
@@ -67,5 +79,8 @@ const foodSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Create a 2dsphere index on pickupCoordinates
+foodSchema.index({ pickupCoordinates: "2dsphere" });
 
 module.exports = mongoose.model("food", foodSchema);
