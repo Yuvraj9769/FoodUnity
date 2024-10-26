@@ -575,24 +575,54 @@ const getFifteenKMPosts = asyncHandler(async (req, res) => {
 
   const distanceInKM = 15;
 
-  console.log();
-
-  const nearbyPosts = await foodModel.find({
-    pickupCoordinates: {
-      $near: {
-        $geometry: {
-          type: "Point",
-          coordinates: [
-            user.pickupCoordinates.coordinates[0],
-            user.pickupCoordinates.coordinates[1],
-          ],
-        },
-        $maxDistance: distanceInKM * 1000,
-      },
-    },
+  const requestedUserData = await requestModel.find({
+    requesterId: req.user._id,
   });
 
-  console.log(JSON.stringify(nearbyPosts, null, 2));
+  const nearbyPosts = await foodModel
+    .find({
+      pickupCoordinates: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [
+              user.pickupCoordinates.coordinates[1],
+              user.pickupCoordinates.coordinates[0],
+            ],
+          },
+          $maxDistance: distanceInKM * 1000,
+        },
+      },
+    })
+    .select("-pickupCoordinates");
+
+  if (nearbyPosts.length === 0 || !nearbyPosts) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  const newFilteredPostsWithRequestStatus = nearbyPosts.map((e) => {
+    const sampleData = requestedUserData.filter((e2) => {
+      return e2.foodId.toString() === e._id.toString();
+    });
+
+    const objData = {
+      requestStatus: sampleData[0]?.status || "request",
+      food: e,
+    };
+
+    return objData;
+  });
+
+  if (
+    newFilteredPostsWithRequestStatus.length === 0 ||
+    !newFilteredPostsWithRequestStatus
+  ) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, newFilteredPostsWithRequestStatus, "Ok"));
 });
 
 module.exports = {

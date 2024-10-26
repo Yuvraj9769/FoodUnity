@@ -38,6 +38,8 @@ function App() {
     searchQuery: "",
   });
 
+  const [isFilterOn, checkandSetFilter] = useState(false);
+
   const handleOnChange = (e) => {
     const { value } = e.target;
 
@@ -50,78 +52,84 @@ function App() {
   };
 
   const checkKey = async (e) => {
-    if (
-      e.key === "Enter" &&
-      location.pathname === "/posts" &&
-      Object.keys(searchData.searchQuery).length !== 0
-    ) {
-      try {
-        const res = await searchDataQuery(searchData);
-        if (res.statusCode === 200 && res.success) {
-          dispatch(setSearchedData(res.data));
+    if (!isFilterOn) {
+      if (
+        e.key === "Enter" &&
+        location.pathname === "/posts" &&
+        Object.keys(searchData.searchQuery).length !== 0
+      ) {
+        try {
+          const res = await searchDataQuery(searchData);
+          if (res.statusCode === 200 && res.success) {
+            dispatch(setSearchedData(res.data));
+          }
+        } catch (error) {
+          toast.error(error.message);
         }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    } else if (
-      e.key === "Enter" &&
-      location.pathname === "/foods/notifications" &&
-      Object.keys(searchData.searchQuery).length !== 0
-    ) {
-      try {
-        const res = await searchNotification(searchData);
-        if (res.statusCode === 200 && res.success) {
-          dispatch(setSearchedData(res.data));
+      } else if (
+        e.key === "Enter" &&
+        location.pathname === "/foods/notifications" &&
+        Object.keys(searchData.searchQuery).length !== 0
+      ) {
+        try {
+          const res = await searchNotification(searchData);
+          if (res.statusCode === 200 && res.success) {
+            dispatch(setSearchedData(res.data));
+          }
+        } catch (error) {
+          toast.error(error.message);
         }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    } else if (
-      e.key === "Enter" &&
-      location.pathname === "/getposts" &&
-      Object.keys(searchData.searchQuery).length !== 0
-    ) {
-      try {
-        const res = await serchPostForUser(searchData);
-        if (res.statusCode === 200 && res.success) {
-          dispatch(setSearchedData(res.data));
+      } else if (
+        e.key === "Enter" &&
+        location.pathname === "/getposts" &&
+        Object.keys(searchData.searchQuery).length !== 0
+      ) {
+        try {
+          const res = await serchPostForUser(searchData);
+          if (res.statusCode === 200 && res.success) {
+            dispatch(setSearchedData(res.data));
+          }
+        } catch (error) {
+          toast.error(error.message);
         }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    } else if (
-      e.key === "Enter" &&
-      location.pathname === "/foods/requestsData" &&
-      Object.keys(searchData.searchQuery).length !== 0
-    ) {
-      try {
-        const res = await searchUserRequestData(searchData);
-        if (res.statusCode === 200 && res.success) {
-          dispatch(setSearchedData(res.data));
+      } else if (
+        e.key === "Enter" &&
+        location.pathname === "/foods/requestsData" &&
+        Object.keys(searchData.searchQuery).length !== 0
+      ) {
+        try {
+          const res = await searchUserRequestData(searchData);
+          if (res.statusCode === 200 && res.success) {
+            dispatch(setSearchedData(res.data));
+          }
+        } catch (error) {
+          toast.error(error.message);
         }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    } else if (
-      e.key === "Enter" &&
-      location.pathname === "/postHistory" &&
-      Object.keys(searchData.searchQuery).length !== 0
-    ) {
-      try {
-        const res = await searchUserHistory(searchData);
-        if (res.statusCode === 200 && res.success) {
-          dispatch(setSearchedData(res.data));
+      } else if (
+        e.key === "Enter" &&
+        location.pathname === "/postHistory" &&
+        Object.keys(searchData.searchQuery).length !== 0
+      ) {
+        try {
+          const res = await searchUserHistory(searchData);
+          if (res.statusCode === 200 && res.success) {
+            dispatch(setSearchedData(res.data));
+          }
+        } catch (error) {
+          toast.error(error.message);
         }
-      } catch (error) {
-        toast.error(error.message);
+      } else if (
+        e.key === "Enter" &&
+        location.pathname.startsWith("/foods/notifications/") &&
+        location.pathname.split("/foods/notifications/ ").length === 1 &&
+        Object.keys(searchData.searchQuery).length !== 0
+      ) {
+        toast.error("Search is unavailable, there's only one post.");
       }
-    } else if (
-      e.key === "Enter" &&
-      location.pathname.startsWith("/foods/notifications/") &&
-      location.pathname.split("/foods/notifications/ ").length === 1 &&
-      Object.keys(searchData.searchQuery).length !== 0
-    ) {
-      toast.error("Search is unavailable, there's only one post.");
+    } else {
+      if (e.key === "Enter") {
+        toast.error("Please clear the filter before proceeding");
+      }
     }
   };
 
@@ -199,7 +207,14 @@ function App() {
         <PageLoader />
       ) : (
         <searchContext.Provider
-          value={{ searchData, setSearchData, handleOnChange, checkKey }}
+          value={{
+            searchData,
+            setSearchData,
+            handleOnChange,
+            checkKey,
+            isFilterOn,
+            checkandSetFilter,
+          }}
         >
           <Navbar setIsJWTExpired={setIsJWTExpired} />
           <div className="min-h-screen my-2">

@@ -7,6 +7,8 @@ const searchContext = createContext({
   setSearchData: () => {},
   handleOnChange: () => {},
   checkKey: () => {},
+  isFilterOn: false,
+  checkandSetFilter: () => {},
 });
 
 export default searchContext;
