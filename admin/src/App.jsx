@@ -5,9 +5,24 @@ import Sidebar from "./components/Sidebar";
 import { useEffect } from "react";
 import adminContext from "./store/adminContext";
 import Footer from "./components/Footer";
+import toast from "react-hot-toast";
+import { isAdminLoggedIn } from "./api/admin.api";
+import { useDispatch } from "react-redux";
+import { setLogin } from "./features/adminFeatures";
 
 function App() {
   const [darkMode, toggleDarkMode] = useState(true);
+
+  const dispatch = useDispatch();
+
+  const checkLoginStatus = async () => {
+    try {
+      const res = await isAdminLoggedIn();
+      return res.data;
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
 
   useEffect(() => {
     function setClassByOSMode() {
@@ -24,6 +39,16 @@ function App() {
     }
 
     setClassByOSMode();
+
+    checkLoginStatus()
+      .then((data) => {
+        console.log("Useeffect data = ", data);
+        dispatch(setLogin(true));
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        console.log("useEffect error = ", error);
+      });
   }, []);
 
   return (

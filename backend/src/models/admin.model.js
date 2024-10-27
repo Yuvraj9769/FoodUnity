@@ -16,6 +16,9 @@ const AdminSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
+    isLogin: {
+      type: Boolean,
+    },
     email: {
       type: String,
       required: true,
