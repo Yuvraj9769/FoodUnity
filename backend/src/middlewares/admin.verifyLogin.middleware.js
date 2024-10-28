@@ -32,8 +32,8 @@ const verifyAdmin = asyncHandler(async (req, res, next) => {
   }
 
   req.user = {
-    id: user._id,
-    username: user.username,
+    id: admin._id,
+    username: admin.username,
   };
 
   next();

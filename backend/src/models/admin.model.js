@@ -51,7 +51,7 @@ AdminSchema.methods.verifyPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-AdminSchema.methods.generateAccessToken = async function () {
+AdminSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       id: this._id,

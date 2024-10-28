@@ -1,14 +1,13 @@
 import { useState } from "react";
-import MainDashboard from "./components/MainDashboard";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { useEffect } from "react";
 import adminContext from "./store/adminContext";
 import Footer from "./components/Footer";
-import toast from "react-hot-toast";
 import { isAdminLoggedIn } from "./api/admin.api";
 import { useDispatch } from "react-redux";
 import { setLogin } from "./features/adminFeatures";
+import { Outlet } from "react-router-dom";
 
 function App() {
   const [darkMode, toggleDarkMode] = useState(true);
@@ -18,7 +17,7 @@ function App() {
   const checkLoginStatus = async () => {
     try {
       const res = await isAdminLoggedIn();
-      return res.data;
+      return res;
     } catch (error) {
       throw new Error(error);
     }
@@ -42,12 +41,12 @@ function App() {
 
     checkLoginStatus()
       .then((data) => {
-        console.log("Useeffect data = ", data);
-        dispatch(setLogin(true));
+        if (data.statusCode === 200 && data.success === true) {
+          dispatch(setLogin(true));
+        }
       })
-      .catch((error) => {
-        toast.error(error.message);
-        console.log("useEffect error = ", error);
+      .catch(() => {
+        dispatch(setLogin(false));
       });
   }, []);
 
@@ -57,7 +56,7 @@ function App() {
         <Sidebar />
         <div className="flex-1 flex flex-col">
           <Navbar />
-          <MainDashboard />
+          <Outlet />
           <Footer />
         </div>
       </div>

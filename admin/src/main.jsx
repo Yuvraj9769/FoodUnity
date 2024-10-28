@@ -6,27 +6,42 @@ import { Provider } from "react-redux";
 import store from "./store/store.js";
 import { Toaster } from "react-hot-toast";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import LoginOrSignupForm from "../../frontend/src/components/LoginOrSignupForm.jsx";
-import LoginUsingEmail from "../../frontend/src/components/LoginUsingEmail.jsx";
 import RegistrationForm from "./components/RegistrationForm.jsx";
+import LoginForm from "./components/LoginForm.jsx";
+import MainDashboard from "./components/MainDashboard.jsx";
+import VerifyAdminStatus from "./components/VerifyAdminStatus.jsx";
+import AdminNotVerified from "./components/AdminNotVerified.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
-    children: [],
+    element: (
+      <VerifyAdminStatus>
+        <App />
+      </VerifyAdminStatus>
+    ),
+    children: [
+      {
+        path: "/",
+        element: <MainDashboard />,
+      },
+    ],
   },
   {
-    path: "/admin-login-username",
-    element: <LoginOrSignupForm />,
-  },
-  {
-    path: "/admin-login-email",
-    element: <LoginUsingEmail />,
+    path: "/admin-login",
+    element: (
+      <AdminNotVerified>
+        <LoginForm />
+      </AdminNotVerified>
+    ),
   },
   {
     path: "/admin-register",
-    element: <RegistrationForm />,
+    element: (
+      <AdminNotVerified>
+        <RegistrationForm />
+      </AdminNotVerified>
+    ),
   },
 ]);
 
