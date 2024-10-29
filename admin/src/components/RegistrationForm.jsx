@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
-import adminContext from "../store/adminContext";
+import { useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
   emailRegex,
@@ -15,14 +14,14 @@ const RegistrationForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [dataProcessing, setDataProcessing] = useState(false);
 
+  const navigate = useNavigate();
+
   const [registerData, setRegisterData] = useState({
     fullName: "",
     email: "",
     username: "",
     password: "",
   });
-
-  const { toggleDarkMode } = useContext(adminContext);
 
   const registerAdmin = async (e) => {
     e.preventDefault();
@@ -44,11 +43,13 @@ const RegistrationForm = () => {
           toast.error(
             "Full name must contain only letters, with at least two words."
           );
+          break;
         }
       } else if (key === "email") {
         isValid = emailRegex.test(value);
         if (!isValid) {
           toast.error("Please enter a valid email address.");
+          break;
         }
       } else if (key === "username") {
         isValid = usernameRegex.test(value);
@@ -56,6 +57,7 @@ const RegistrationForm = () => {
           toast.error(
             "Username must be 3-15 characters, start with a letter, and contain only letters, numbers, or underscores."
           );
+          break;
         }
       } else if (key === "password") {
         isValid = passwordRegex.test(value);
@@ -63,6 +65,7 @@ const RegistrationForm = () => {
           toast.error(
             "Password must be at least one uppercase letter, one lowercase letter, one number, and one special character."
           );
+          break;
         }
       }
     }
@@ -72,6 +75,7 @@ const RegistrationForm = () => {
         setDataProcessing(true);
         const response = await register_Admin(registerData);
         toast.success(response.message);
+        navigate("/admin-login");
       } catch (error) {
         toast.error(error.message);
       } finally {
@@ -85,23 +89,6 @@ const RegistrationForm = () => {
 
     setRegisterData((preData) => ({ ...preData, [name]: value }));
   };
-
-  useEffect(() => {
-    function setClassByOSMode() {
-      if (
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-      ) {
-        document.documentElement.className = "dark";
-        toggleDarkMode(true);
-      } else {
-        document.documentElement.className = "light";
-        toggleDarkMode(false);
-      }
-    }
-
-    setClassByOSMode();
-  }, []);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 backdrop-blur-lg bg-opacity-50 dark:bg-gray-900 p-0 sm:p-8">
@@ -218,7 +205,7 @@ const RegistrationForm = () => {
         <span className="dark:text-red-600 text-black text-lg text-center w-full">
           Forget Password?
           <Link
-            to="/admin-register"
+            to="/admin-forget-password"
             className="text-blue-600 font-semibold hover:underline ml-1"
           >
             Click here!

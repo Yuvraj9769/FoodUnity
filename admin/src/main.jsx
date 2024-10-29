@@ -11,6 +11,8 @@ import LoginForm from "./components/LoginForm.jsx";
 import MainDashboard from "./components/MainDashboard.jsx";
 import VerifyAdminStatus from "./components/VerifyAdminStatus.jsx";
 import AdminNotVerified from "./components/AdminNotVerified.jsx";
+import SendMailForgetPassword from "./components/SendMailForgetPassword.jsx";
+import ResetPassword from "./components/ResetPassword.jsx";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +42,22 @@ const router = createBrowserRouter([
     element: (
       <AdminNotVerified>
         <RegistrationForm />
+      </AdminNotVerified>
+    ),
+  },
+  {
+    path: "/admin-forget-password",
+    element: (
+      <AdminNotVerified>
+        <SendMailForgetPassword />
+      </AdminNotVerified>
+    ),
+  },
+  {
+    path: "/admin-reset-password/:token",
+    element: (
+      <AdminNotVerified>
+        <ResetPassword />
       </AdminNotVerified>
     ),
   },

@@ -1,7 +1,6 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useContext, useEffect, useState } from "react";
-import adminContext from "../store/adminContext";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { emailRegex } from "../utils/registrationRegex";
 import { login_Admin } from "../api/admin.api";
@@ -10,6 +9,8 @@ import { setLogin } from "../features/adminFeatures";
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [dataProcessing, setDataProcessing] = useState(false);
+
+  const navigate = useNavigate();
 
   const [loginData, setLoginData] = useState({
     identifier: "",
@@ -21,8 +22,6 @@ const LoginForm = () => {
 
     setLoginData((preData) => ({ ...preData, [name]: value }));
   };
-
-  const { toggleDarkMode } = useContext(adminContext);
 
   const loginAdmin = async (e) => {
     e.preventDefault();
@@ -42,6 +41,7 @@ const LoginForm = () => {
         isValid = emailRegex.test(value);
         if (!isValid) {
           toast.error("Please enter a valid email address.");
+          break;
         }
       }
     }
@@ -52,6 +52,7 @@ const LoginForm = () => {
         const res = await login_Admin(loginData);
         setLogin(true);
         toast.success(res.message);
+        navigate("/");
       } catch (error) {
         toast.error(error.message);
       } finally {
@@ -59,23 +60,6 @@ const LoginForm = () => {
       }
     }
   };
-
-  useEffect(() => {
-    function setClassByOSMode() {
-      if (
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-      ) {
-        document.documentElement.className = "dark";
-        toggleDarkMode(true);
-      } else {
-        document.documentElement.className = "light";
-        toggleDarkMode(false);
-      }
-    }
-
-    setClassByOSMode();
-  }, []);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 backdrop-blur-lg bg-opacity-50 dark:bg-gray-900 p-0 sm:p-8">
@@ -162,7 +146,7 @@ const LoginForm = () => {
         <span className="dark:text-red-600 text-black text-lg text-center w-full">
           Forget Password?
           <Link
-            to="/admin-register"
+            to="/admin-forget-password"
             className="text-blue-600 font-semibold hover:underline ml-1"
           >
             Click here!
