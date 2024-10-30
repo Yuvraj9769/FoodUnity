@@ -1,8 +1,12 @@
 import CountUp from "react-countup";
 
+import TotalUsersBarChart from "../components/TotalUsersBarChart";
+import TotalPostsLineChart from "./TotalPostsLineChart";
+import TotalDonorsPieChart from "./TotalDonorsPieChart";
+
 const MainDashboard = () => {
   return (
-    <main className="flex-1 p-6">
+    <main className="flex-1 p-6 overflow-y-scroll scroll-smooth scroll-bar-custom">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
         Welcome to the Dashboard
       </h1>
@@ -33,6 +37,28 @@ const MainDashboard = () => {
           <p className="text-3xl font-semibold">
             <CountUp start={0} end={150} duration={5} />
           </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+          <h2 className="text-xl font-bold">Total Users</h2>
+          <TotalUsersBarChart />
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+          <h2 className="text-xl font-bold">Total Posts</h2>
+          <TotalPostsLineChart />
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+          <h2 className="text-xl font-bold">Total Donors</h2>
+          <TotalDonorsPieChart />
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+          <h2 className="text-xl font-bold">Total Recipients</h2>
+          {/* <TotalRecipientsDoughnutChart /> */}
         </div>
       </div>
     </main>

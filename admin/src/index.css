@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom scrollbar for WebKit browsers */
+.scroll-bar-custom::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.scroll-bar-custom::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.8); /* Dark thumb color */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.scroll-bar-custom::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 1); /* White track color */
+  border-radius: 4px; /* Ensure track has rounded corners too */
+}
+
+/* For Firefox */
+.scroll-bar-custom {
+  scrollbar-width: thin; /* Thin scrollbar */
+  scrollbar-color: rgba(0, 0, 0, 0.8) rgba(255, 255, 255, 1); /* Thumb and track colors */
+}

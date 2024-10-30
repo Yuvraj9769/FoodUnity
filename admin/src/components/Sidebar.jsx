@@ -1,48 +1,60 @@
-// src/components/Sidebar.js
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   return (
     <aside className="bg-gray-200 dark:bg-gray-900 w-64 min-h-screen p-4 border-r border-r-gray-500">
       <ul className="space-y-2">
         <li>
-          <a
-            href="#"
-            className="block text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded"
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `block text-gray-800 dark:text-gray-200 p-2 rounded hover:bg-gradient-to-r from-cyan-500 to-blue-600 hover:dark:from-cyan-700 hover:dark:to-blue-800 ${
+                isActive &&
+                "bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-700 dark:to-blue-800"
+              } `
+            }
           >
             Dashboard
-          </a>
+          </NavLink>
         </li>
         <li>
-          <a
-            href="#"
-            className="block text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded"
+          <NavLink
+            to="/users"
+            className={({ isActive }) =>
+              `block text-gray-800 dark:text-gray-200 p-2 rounded hover:bg-gradient-to-r from-lime-500 to-green-600 hover:dark:from-lime-600 hover:dark:to-green-800 ${
+                isActive &&
+                "bg-gradient-to-r from-lime-500 to-green-600 dark:from-lime-600 dark:to-green-800"
+              } `
+            }
           >
             Users
-          </a>
+          </NavLink>
         </li>
         <li>
-          <a
-            href="#"
-            className="block text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded"
+          <NavLink
+            to="/posts"
+            className={({ isActive }) =>
+              `block text-gray-800 dark:text-gray-200 p-2 rounded hover:bg-gradient-to-r from-orange-500 to-pink-600 hover:dark:from-orange-600 hover:dark:to-pink-800 ${
+                isActive &&
+                "bg-gradient-to-r from-orange-500 to-pink-600 dark:from-orange-600 dark:to-pink-800"
+              } `
+            }
           >
             Posts
-          </a>
+          </NavLink>
         </li>
         <li>
-          <a
-            href="#"
-            className="block text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded"
+          <NavLink
+            to="/analytics"
+            className={({ isActive }) =>
+              `block text-gray-800 dark:text-gray-200 p-2 rounded hover:bg-gradient-to-r from-purple-500 to-indigo-600 hover:dark:from-purple-700 hover:dark:to-indigo-800 ${
+                isActive &&
+                "bg-gradient-to-r from-purple-500 to-indigo-600 dark:from-purple-700 dark:to-indigo-800"
+              } `
+            }
           >
             Analytics
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            className="block text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded"
-          >
-            Settings
-          </a>
+          </NavLink>
         </li>
       </ul>
     </aside>
