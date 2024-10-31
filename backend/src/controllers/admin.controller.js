@@ -5,6 +5,9 @@ const bcrypt = require("bcryptjs");
 const moment = require("moment");
 const sendPasswordResetMail = require("../utils/sendMail");
 const sendMail = require("../utils/sendMail");
+const userModel = require("../models/user.model");
+const requestModel = require("../models/request.model");
+const foodModel = require("../models/food.model");
 
 const checkIsAdminLogin = asyncHandler(async (req, res) => {
   const admin = await adminModel.findById(req.user.id);
@@ -295,6 +298,61 @@ const resetAdminPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Password reset successfully"));
 });
 
+const getAllUserForAdmin = asyncHandler(async (req, res) => {
+  const users = await userModel
+    .find()
+    .select(
+      "-password -notifications -pickupCoordinates -passwordResetToken -passwordResetExpires -locationCoordinates"
+    );
+
+  if (users.length === 0 || !users) {
+    return res.status(404).json(new ApiResponse(404, null, "No users found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, users, "OK"));
+});
+
+const deleteUserAsAdminPrevilage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "User ID is required"));
+  }
+
+  await requestModel.deleteMany({
+    $or: [{ requesterId: id }, { donorId: id }],
+  });
+
+  await foodModel.deleteMany({
+    userId: id,
+  });
+
+  const delUser = await userModel.findByIdAndDelete(id);
+  if (!delUser) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  const remainingUsers = await userModel.find();
+
+  if (!remainingUsers) {
+    return res
+      .status(404)
+      .json(
+        new ApiResponse(
+          404,
+          null,
+          "User Deleted Successfully, new users not found"
+        )
+      );
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, remainingUsers, "User Deleted Successfully"));
+});
+
 module.exports = {
   checkIsAdminLogin,
   registerAdmin,
@@ -302,4 +360,6 @@ module.exports = {
   resetPasswordSendMail,
   checkAdminTokenExipry,
   resetAdminPassword,
+  getAllUserForAdmin,
+  deleteUserAsAdminPrevilage,
 };

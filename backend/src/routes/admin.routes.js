@@ -5,6 +5,8 @@ const {
   resetPasswordSendMail,
   checkAdminTokenExipry,
   resetAdminPassword,
+  getAllUserForAdmin,
+  deleteUserAsAdminPrevilage,
 } = require("../controllers/admin.controller");
 const verifyAdmin = require("../middlewares/admin.verifyLogin.middleware");
 
@@ -19,5 +21,8 @@ router.route("/reset-admin-password").post(resetAdminPassword);
 //secured routes : -
 
 router.route("/checkLogin").get(verifyAdmin, checkIsAdminLogin);
+router.route("/getAllUserForAdmin").get(verifyAdmin, getAllUserForAdmin);
+//delete user and user related all posts, notifications etc.
+router.route("/deleteUser/:id").delete(verifyAdmin, deleteUserAsAdminPrevilage);
 
 module.exports = router;

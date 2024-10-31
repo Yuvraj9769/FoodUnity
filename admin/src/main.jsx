@@ -13,6 +13,7 @@ import VerifyAdminStatus from "./components/VerifyAdminStatus.jsx";
 import AdminNotVerified from "./components/AdminNotVerified.jsx";
 import SendMailForgetPassword from "./components/SendMailForgetPassword.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
+import DashboardUser from "./components/DashboardUser.jsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <MainDashboard />,
+      },
+      {
+        path: "/users",
+        element: <DashboardUser />,
       },
     ],
   },

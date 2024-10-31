@@ -2,7 +2,8 @@ import CountUp from "react-countup";
 
 import TotalUsersBarChart from "../components/TotalUsersBarChart";
 import TotalPostsLineChart from "./TotalPostsLineChart";
-import TotalDonorsPieChart from "./TotalDonorsPieChart";
+import TotalDonorsGaugeChart from "./TotalDonorsGaugeChart";
+import TotalRecipientsRadialBarChart from "./TotalRecipientsRadialBarChart";
 
 const MainDashboard = () => {
   return (
@@ -42,23 +43,31 @@ const MainDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-          <h2 className="text-xl font-bold">Total Users</h2>
+          <h2 className="text-xl font-bold text-black dark:text-slate-50 my-1">
+            Total Users
+          </h2>
           <TotalUsersBarChart />
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-          <h2 className="text-xl font-bold">Total Posts</h2>
+          <h2 className="text-xl font-bold text-black dark:text-slate-50 my-1">
+            Total Posts
+          </h2>
           <TotalPostsLineChart />
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-          <h2 className="text-xl font-bold">Total Donors</h2>
-          <TotalDonorsPieChart />
+          <h2 className="text-xl font-bold text-black dark:text-slate-50 my-1">
+            Total Donors
+          </h2>
+          <TotalDonorsGaugeChart />
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-          <h2 className="text-xl font-bold">Total Recipients</h2>
-          {/* <TotalRecipientsDoughnutChart /> */}
+          <h2 className="text-xl font-bold text-black dark:text-slate-50 my-1">
+            Total Recipients
+          </h2>
+          <TotalRecipientsRadialBarChart />
         </div>
       </div>
     </main>
