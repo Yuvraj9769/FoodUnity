@@ -1,78 +1,97 @@
-import { useContext, useEffect, useState } from "react";
-import { getDonorPostedPosts } from "../api/foodApi";
-import { useDispatch, useSelector } from "react-redux";
-import { setPostData } from "../features/foodUnity";
-import { toast } from "react-hot-toast";
-import { LuFileClock } from "react-icons/lu";
-import { IoMdAdd } from "react-icons/io";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import PageLoader from "./PageLoader";
-import secureLocalStorage from "react-secure-storage";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import {
+  deletePostAsAdminPrevilage,
+  getAllFoodPostsForAdmin,
+  searchPost,
+} from "../api/food.api";
+import { setPostsData, setSearchedData } from "../features/adminFeatures";
+import calculateTimeDifferenceString from "../utils/calculateTimeDifferenceString";
+import { LuFileClock } from "react-icons/lu";
+import { useLocation } from "react-router-dom";
 import { FcAlarmClock } from "react-icons/fc";
 import { MdDelete, MdDeliveryDining, MdLocationOn } from "react-icons/md";
-import { CiEdit } from "react-icons/ci";
-import { deleteFoodPost } from "../api/foodApi";
-import calculateTimeDifferenceString from "../utils/calculateTimeDifferenceString";
 import getClockTime from "../utils/getClockTime";
-import searchContext from "../store/searchContext";
 
-const FoodCards = () => {
+const PostsForAdmin = () => {
   const dispatch = useDispatch();
-  const postData = useSelector((state) => state.postData);
-  const userData = useSelector((state) => state.userData);
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
-  const searchedData = useSelector((state) => state.searchedData);
 
   const [popupBox, setPopupBox] = useState(false);
   const [delIndex, setDelIndex] = useState(null);
-  const { searchData, handleOnChange, checkKey } = useContext(searchContext);
 
-  const navigate = useNavigate();
+  const location = useLocation();
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const donor = secureLocalStorage.getItem("donor");
+  const postsData = useSelector((state) => state.postsData);
+  const searchedData = useSelector((state) => state.searchedData);
 
-    setTimeout(() => {
-      if (donor && postData.length == 0) {
-        (async () => {
-          try {
-            const data = await getDonorPostedPosts();
-            dispatch(setPostData(data));
-          } catch (error) {
-            toast.error(error.message);
-            navigate("/");
-          }
-        })();
+  const [searchData, setSearchData] = useState({
+    searchQuery: "",
+  });
+
+  const handleOnChange = (e) => {
+    const { value } = e.target;
+
+    if (searchedData.length !== 0 && value === "") {
+      dispatch(setSearchedData([]));
+    }
+    setSearchData((preData) => ({ ...preData, searchQuery: value }));
+  };
+
+  const checkKey = async (e) => {
+    if (
+      e.key === "Enter" &&
+      location.pathname === "/users-posts-admin" &&
+      searchData.searchQuery.trim() !== ""
+    ) {
+      try {
+        setLoading(true);
+        const res = await searchPost(searchData);
+        dispatch(setSearchedData(res));
+      } catch (error) {
+        setSearchData({
+          searchQuery: "",
+        });
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
-    }, 700);
-  }, []);
+    }
+  };
 
   const getDeletePost = (ind) => {
     setDelIndex(ind);
     setPopupBox(true);
   };
 
+  useEffect(() => {
+    if (postsData.length === 0 || postsData) {
+      getAllFoodPostsForAdmin()
+        .then((data) => dispatch(setPostsData(data.data)))
+        .catch((error) => toast.error(error.message))
+        .finally(() => setLoading(false));
+    }
+    if (postsData.length !== 0) {
+      setLoading(false);
+    }
+  }, []);
+
   const deletePost = async () => {
     try {
       setPopupBox(false);
       if (searchedData.length !== 0) {
-        const res = await deleteFoodPost(searchedData[delIndex]._id);
-        if (res.statusCode === 200 && res.success) {
-          const updatedPostData = await getDonorPostedPosts();
-          dispatch(setPostData(updatedPostData));
-          toast.success("Post deleted successfully");
-        }
-      } else if (postData.length !== 0) {
-        const res = await deleteFoodPost(postData[delIndex]._id);
-        if (res.statusCode === 200 && res.success) {
-          const updatedPostData = await getDonorPostedPosts();
-          dispatch(setPostData(updatedPostData));
-          toast.success("Post deleted successfully");
-        }
+        await deletePostAsAdminPrevilage(searchedData[delIndex]._id);
+        const res = await getAllFoodPostsForAdmin();
+        dispatch(setPostsData(res.data));
+        toast.success("Post deleted successfully");
+      } else if (postsData.length !== 0) {
+        await deletePostAsAdminPrevilage(postsData[delIndex]._id);
+        const res = await getAllFoodPostsForAdmin();
+        dispatch(setPostsData(res.data));
+        toast.success("Post deleted successfully");
       }
     } catch (error) {
       toast.error(error.message);
@@ -83,22 +102,22 @@ const FoodCards = () => {
     <>
       {loading ? (
         <PageLoader />
-      ) : postData.length != 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3">
-          <div className="w-full flex items-center justify-center lg:hidden p-4 lg:py-6 gap-4 flex-wrap lg:flex-nowrap">
-            <div className="gap-3 w-full inline-flex items-center justify-center text-black rounded-md pr-2">
+      ) : postsData.length != 0 ? (
+        <div className="flex flex-col items-center gap-3 overflow-y-scroll scroll-smooth scroll-bar-custom">
+          <div className="w-full flex items-center justify-center p-4 lg:py-6 gap-4 flex-wrap lg:flex-nowrap">
+            <div className="gap-3 w-full inline-flex mt-2 items-center justify-center text-black rounded-md pr-2">
               <input
                 type="text"
                 value={searchData.searchQuery}
                 onChange={handleOnChange}
                 onKeyDown={checkKey}
-                placeholder="Search"
-                className="p-2 rounded-md border-none outline-none sm:w-[85%] dark:bg-slate-800 duration-500  bg-slate-200 focus-within:ring-1 dark:focus-within:ring-blue-500 focus-within:ring-black group dark:text-slate-50 text-black"
+                placeholder="Search food by type/name"
+                className="p-2 rounded-md border-none outline-none w-[85%] lg:w-[45%] dark:bg-slate-800 duration-500  bg-slate-200 focus-within:ring-1 dark:focus-within:ring-blue-500 focus-within:ring-black group dark:text-slate-50 text-black"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-6 xl:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-4 gap-6 xl:gap-5">
             {searchedData.length !== 0
               ? searchedData.map((e, ind) => (
                   <div
@@ -114,7 +133,7 @@ const FoodCards = () => {
                       <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                         {e.foodTitle}
                       </div>
-                      <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll scroller-display-none scroll-smooth h-[92px]">
+                      <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll child-scrollbar scroll-smooth h-[92px]">
                         {e.description}
                       </p>
                       <div className="flex items-center justify-between w-full">
@@ -172,9 +191,6 @@ const FoodCards = () => {
                           className="text-2xl cursor-pointer hover:scale-105 duration-500"
                           onClick={() => getDeletePost(ind)}
                         />
-                        <Link to={`/updateFoodPost/${ind}`}>
-                          <CiEdit className="text-2xl cursor-pointer hover:scale-105 duration-500" />
-                        </Link>
                       </div>
                     </div>
 
@@ -206,7 +222,7 @@ const FoodCards = () => {
                     )}
                   </div>
                 ))
-              : postData.map((e, ind) => (
+              : postsData.map((e, ind) => (
                   <div
                     className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800"
                     key={ind}
@@ -220,7 +236,7 @@ const FoodCards = () => {
                       <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                         {e.foodTitle}
                       </div>
-                      <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll scroller-display-none scroll-smooth h-[92px]">
+                      <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll child-scrollbar scroll-smooth h-[92px] ">
                         {e.description}
                       </p>
                       <div className="flex items-center justify-between w-full">
@@ -278,9 +294,6 @@ const FoodCards = () => {
                           className="text-2xl cursor-pointer hover:scale-105 duration-500"
                           onClick={() => getDeletePost(ind)}
                         />
-                        <Link to={`/updateFoodPost/${ind}`}>
-                          <CiEdit className="text-2xl cursor-pointer hover:scale-105 duration-500" />
-                        </Link>
                       </div>
                     </div>
 
@@ -319,17 +332,10 @@ const FoodCards = () => {
           <p className="text-2xl md:text-4xl text-center">
             Sorry, there are no posts available at the moment.
           </p>
-          {isLoggedIn && userData.role === "donor" && (
-            <Link to="/doPost">
-              <button className="text-slate-50 text-lg bg-blue-700 px-4 py-2 rounded-lg my-2 outline-none border-none hover:bg-blue-800 self-center duration-200 inline-flex items-center gap-2">
-                <IoMdAdd /> Create
-              </button>
-            </Link>
-          )}
         </div>
       )}
     </>
   );
 };
 
-export default FoodCards;
+export default PostsForAdmin;

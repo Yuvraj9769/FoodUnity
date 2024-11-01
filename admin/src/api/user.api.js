@@ -33,4 +33,62 @@ const deleteUserAsAdminPrevilage = async (id) => {
   }
 };
 
-export { getAllUsersData, deleteUserAsAdminPrevilage };
+const updateUserDataAsAdminPrivilage = async (data) => {
+  try {
+    const response = await axios.patch(`${SERVER}/admin/updateUser`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+const searchUserForAdmin = async (data) => {
+  try {
+    const response = await axios.post(
+      `${SERVER}/admin/searchuserForAdmin`,
+      data,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+const getAllDonorAndRecipients = async () => {
+  try {
+    const response = await axios.get(`${SERVER}/admin/usersWithCategory`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+export {
+  getAllUsersData,
+  deleteUserAsAdminPrevilage,
+  updateUserDataAsAdminPrivilage,
+  searchUserForAdmin,
+  getAllDonorAndRecipients,
+};

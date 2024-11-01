@@ -6,6 +6,8 @@ const initialState = {
   postsData: [],
   usersData: [],
   adminData: [],
+  searchedData: [],
+  graphData: [{}, {}],
   donorsData: [],
   recipientsData: [],
 };
@@ -35,6 +37,12 @@ const adminSlice = createSlice({
     setRecipientsData: (state, action) => {
       state.recipientsData = action.payload;
     },
+    setSearchedData: (state, action) => {
+      state.searchedData = action.payload;
+    },
+    setGraphData: (state, action) => {
+      state.graphData = action.payload;
+    },
   },
 });
 
@@ -46,6 +54,8 @@ export const {
   setAdminData,
   setDonorsData,
   setRecipientsData,
+  setSearchedData,
+  setGraphData,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

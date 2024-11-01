@@ -353,6 +353,170 @@ const deleteUserAsAdminPrevilage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, remainingUsers, "User Deleted Successfully"));
 });
 
+const updateUserDataAsAdminPrivilage = asyncHandler(async (req, res) => {
+  const { email, fullName, mobileNumber, role, username } = req.body;
+
+  if (
+    [email, fullName, mobileNumber, role, username].some(
+      (field) => field.trim() === ""
+    )
+  ) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "All fields are required"));
+  }
+
+  const userWithExistingUsernameOrEmail = await userModel.find({
+    $or: [{ username }, { email }],
+  });
+
+  if (userWithExistingUsernameOrEmail.length > 1) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Username or email already exists"));
+  }
+
+  const user = await userModel
+    .findOneAndUpdate(
+      {
+        $or: [{ email }, { username }],
+      },
+      {
+        $set: {
+          email,
+          fullName,
+          mobileNumber,
+          role,
+          username,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+    .select(
+      "-password -notifications -pickupCoordinates -passwordResetToken -passwordResetExpires -locationCoordinates"
+    );
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User Not Found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User updated successfully"));
+});
+
+const getAllFoodPostsForAdmin = asyncHandler(async (req, res) => {
+  const foods = await foodModel.find({
+    isDelete: false,
+  });
+
+  if (!foods) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No food posts found"));
+  }
+
+  res.status(200).json(new ApiResponse(200, foods, "Food Posts Fetched"));
+});
+
+const getSearchedPost = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.body;
+
+  if (!searchQuery) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Search query is required"));
+  }
+
+  const foodPosts = await foodModel.find({
+    $or: [
+      { foodTitle: { $regex: searchQuery, $options: "i" } },
+      {
+        foodType: { $regex: `^${searchQuery}$`, $options: "i" },
+      },
+    ],
+  });
+
+  if (foodPosts.length === 0 || !foodPosts) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No food posts found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, foodPosts, "OK"));
+});
+
+const deletePostAsAdminPrevilage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json(new ApiResponse(400, null, "ID is required"));
+  }
+
+  const deletePost = await foodModel.findByIdAndDelete(id);
+
+  if (!deletePost) {
+    return res.status(404).json(new ApiResponse(404, null, "No post found"));
+  }
+
+  await requestModel.findOneAndDelete({
+    foodId: id,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Post deleted successfully"));
+});
+
+const searchUserForAdmin = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.body;
+  if (!searchQuery) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Search query is required"));
+  }
+
+  const user = await userModel
+    .find({
+      $or: [
+        { username: { $regex: searchQuery, $options: "i" } },
+        { email: { $regex: searchQuery, $options: "i" } },
+      ],
+    })
+    .select(
+      "-password -notifications -pickupCoordinates -passwordResetToken -passwordResetExpires -locationCoordinates"
+    );
+
+  if (user.length === 0 || !user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, user, "OK"));
+});
+
+const getAllDonorAndRecipients = asyncHandler(async (_, res) => {
+  const donor = await userModel.countDocuments({ role: "donor" });
+  const recipient = await userModel.countDocuments({ role: "recipient" });
+
+  if (donor.length === 0 && recipient.length === 0) {
+    return res.status(404).json(new ApiResponse(404, null, "No users found"));
+  }
+
+  const users = [
+    {
+      donorsCount: donor,
+    },
+    {
+      recipientsCount: recipient,
+    },
+  ];
+
+  return res.status(200).json(new ApiResponse(200, users, "OK"));
+});
+
 module.exports = {
   checkIsAdminLogin,
   registerAdmin,
@@ -362,4 +526,10 @@ module.exports = {
   resetAdminPassword,
   getAllUserForAdmin,
   deleteUserAsAdminPrevilage,
+  updateUserDataAsAdminPrivilage,
+  getAllFoodPostsForAdmin,
+  getSearchedPost,
+  deletePostAsAdminPrevilage,
+  searchUserForAdmin,
+  getAllDonorAndRecipients,
 };

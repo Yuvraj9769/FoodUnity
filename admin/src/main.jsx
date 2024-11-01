@@ -14,6 +14,9 @@ import AdminNotVerified from "./components/AdminNotVerified.jsx";
 import SendMailForgetPassword from "./components/SendMailForgetPassword.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
 import DashboardUser from "./components/DashboardUser.jsx";
+import UpdateUserForm from "./components/UpdateUserForm.jsx";
+import PostsForAdmin from "./components/PostsForAdmin.jsx";
+import Analytics from "./components/Analytics.jsx";
 
 const router = createBrowserRouter([
   {
@@ -29,8 +32,20 @@ const router = createBrowserRouter([
         element: <MainDashboard />,
       },
       {
-        path: "/users",
+        path: "/users-admin",
         element: <DashboardUser />,
+      },
+      {
+        path: "/user-update-data/:index",
+        element: <UpdateUserForm />,
+      },
+      {
+        path: "/users-posts-admin",
+        element: <PostsForAdmin />,
+      },
+      {
+        path: "/admin-analytics",
+        element: <Analytics />,
       },
     ],
   },
