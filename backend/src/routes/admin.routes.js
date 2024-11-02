@@ -13,6 +13,9 @@ const {
   deletePostAsAdminPrevilage,
   searchUserForAdmin,
   getAllDonorAndRecipients,
+  getAllFoodPostsMonthWise,
+  getDeliveredPosts,
+  requestPendingPosts,
 } = require("../controllers/admin.controller");
 const verifyAdmin = require("../middlewares/admin.verifyLogin.middleware");
 
@@ -39,5 +42,8 @@ router
   .delete(verifyAdmin, deletePostAsAdminPrevilage);
 router.route("/searchuserForAdmin").post(verifyAdmin, searchUserForAdmin);
 router.route("/usersWithCategory").get(verifyAdmin, getAllDonorAndRecipients);
+router.route("/monthWisePosts").get(verifyAdmin, getAllFoodPostsMonthWise);
+router.route("/deliveredPosts").get(verifyAdmin, getDeliveredPosts);
+router.route("/reqPendingPosts").get(verifyAdmin, requestPendingPosts);
 
 module.exports = router;

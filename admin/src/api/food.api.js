@@ -52,4 +52,59 @@ const deletePostAsAdminPrevilage = async (data) => {
   }
 };
 
-export { getAllFoodPostsForAdmin, searchPost, deletePostAsAdminPrevilage };
+const getAllFoodPostsMonthWise = async () => {
+  try {
+    const response = await axios.get(`${SERVER}/admin/monthWisePosts`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+const getDeliveredPosts = async () => {
+  try {
+    const response = await axios.get(`${SERVER}/admin/deliveredPosts`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+const requestPendingPosts = async () => {
+  try {
+    const response = await axios.get(`${SERVER}/admin/reqPendingPosts`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+export {
+  getAllFoodPostsForAdmin,
+  searchPost,
+  deletePostAsAdminPrevilage,
+  getAllFoodPostsMonthWise,
+  getDeliveredPosts,
+  requestPendingPosts,
+};

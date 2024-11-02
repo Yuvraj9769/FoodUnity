@@ -26,7 +26,7 @@ const TotalRecipientsRadialBarChart = () => {
   const data = [
     {
       name: "Total Recipients",
-      count: graphData[1].count,
+      count: graphData[1]?.count || 0,
       fill: "url(#recipientGradient)",
     },
   ];
@@ -107,7 +107,10 @@ const TotalRecipientsRadialBarChart = () => {
               clockWise
               dataKey="count"
               fill="url(#recipientGradient)"
-              label={{ position: "insideEnd", fill: textColor }}
+              background={{
+                fill: "black",
+              }}
+              label={{ position: "insideEnd", fill: "white" }}
             />
             <Tooltip
               cursor={{ fill: "transparent" }}

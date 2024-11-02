@@ -8,6 +8,8 @@ const initialState = {
   adminData: [],
   searchedData: [],
   graphData: [{}, {}],
+  lineChartGraphData: [],
+  barChartGraphData: [],
   donorsData: [],
   recipientsData: [],
 };
@@ -43,6 +45,12 @@ const adminSlice = createSlice({
     setGraphData: (state, action) => {
       state.graphData = action.payload;
     },
+    setLineChartGraphData: (state, action) => {
+      state.lineChartGraphData = action.payload;
+    },
+    setBarChartGraphData: (state, action) => {
+      state.barChartGraphData = action.payload;
+    },
   },
 });
 
@@ -56,6 +64,8 @@ export const {
   setRecipientsData,
   setSearchedData,
   setGraphData,
+  setLineChartGraphData,
+  setBarChartGraphData,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

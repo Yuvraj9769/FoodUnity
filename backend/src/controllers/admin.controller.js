@@ -1,7 +1,6 @@
 const adminModel = require("../models/admin.model");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
-const bcrypt = require("bcryptjs");
 const moment = require("moment");
 const sendPasswordResetMail = require("../utils/sendMail");
 const sendMail = require("../utils/sendMail");
@@ -517,6 +516,167 @@ const getAllDonorAndRecipients = asyncHandler(async (_, res) => {
   return res.status(200).json(new ApiResponse(200, users, "OK"));
 });
 
+const getAllFoodPostsMonthWise = asyncHandler(async (req, res) => {
+  const foodPosts = await foodModel.aggregate([
+    {
+      $group: {
+        _id: { $month: "$createdAt" },
+        count: { $sum: 1 },
+      },
+    },
+
+    {
+      $project: {
+        monthNumber: "$_id",
+        monthName: {
+          $switch: {
+            branches: [
+              { case: { $eq: ["$_id", 1] }, then: "January" },
+              { case: { $eq: ["$_id", 2] }, then: "February" },
+              { case: { $eq: ["$_id", 3] }, then: "March" },
+              { case: { $eq: ["$_id", 4] }, then: "April" },
+              { case: { $eq: ["$_id", 5] }, then: "May" },
+              { case: { $eq: ["$_id", 6] }, then: "June" },
+              { case: { $eq: ["$_id", 7] }, then: "July" },
+              { case: { $eq: ["$_id", 8] }, then: "August" },
+              { case: { $eq: ["$_id", 9] }, then: "September" },
+              { case: { $eq: ["$_id", 10] }, then: "October" },
+              { case: { $eq: ["$_id", 11] }, then: "November" },
+              { case: { $eq: ["$_id", 12] }, then: "December" },
+            ],
+            default: "Unknown",
+          },
+        },
+        count: 1,
+        _id: 0,
+      },
+    },
+
+    {
+      $sort: {
+        monthNumber: 1,
+      },
+    },
+  ]);
+
+  if (foodPosts.length === 0 || !foodPosts) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No food posts found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, foodPosts, "OK"));
+});
+
+const getDeliveredPosts = asyncHandler(async (req, res) => {
+  const posts = await foodModel.aggregate([
+    {
+      $match: {
+        status: "delivered",
+      },
+    },
+    {
+      $group: {
+        _id: { $month: "$createdAt" },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        monthName: {
+          $switch: {
+            branches: [
+              { case: { $eq: ["$_id", 1] }, then: "January" },
+              { case: { $eq: ["$_id", 2] }, then: "February" },
+              { case: { $eq: ["$_id", 3] }, then: "March" },
+              { case: { $eq: ["$_id", 4] }, then: "April" },
+              { case: { $eq: ["$_id", 5] }, then: "May" },
+              { case: { $eq: ["$_id", 6] }, then: "June" },
+              { case: { $eq: ["$_id", 7] }, then: "July" },
+              { case: { $eq: ["$_id", 8] }, then: "August" },
+              { case: { $eq: ["$_id", 9] }, then: "September" },
+              { case: { $eq: ["$_id", 10] }, then: "October" },
+              { case: { $eq: ["$_id", 11] }, then: "November" },
+              { case: { $eq: ["$_id", 12] }, then: "December" },
+            ],
+            default: "Unknown",
+          },
+        },
+        count: 1,
+        _id: 0,
+      },
+    },
+  ]);
+
+  if (!posts) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, posts, "OK"));
+});
+
+const requestPendingPosts = asyncHandler(async (req, res) => {
+  const posts = await requestModel.find();
+
+  const requestPendingFoodPostsCounts = await foodModel.aggregate([
+    {
+      $match: {
+        _id: {
+          $nin: posts.map(({ foodId }) => foodId),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: "$createdAt" },
+        count: { $sum: 1 },
+      },
+    },
+
+    {
+      $project: {
+        monthNumber: "$_id",
+        monthName: {
+          $switch: {
+            branches: [
+              { case: { $eq: ["$_id", 1] }, then: "January" },
+              { case: { $eq: ["$_id", 2] }, then: "February" },
+              { case: { $eq: ["$_id", 3] }, then: "March" },
+              { case: { $eq: ["$_id", 4] }, then: "April" },
+              { case: { $eq: ["$_id", 5] }, then: "May" },
+              { case: { $eq: ["$_id", 6] }, then: "June" },
+              { case: { $eq: ["$_id", 7] }, then: "July" },
+              { case: { $eq: ["$_id", 8] }, then: "August" },
+              { case: { $eq: ["$_id", 9] }, then: "September" },
+              { case: { $eq: ["$_id", 10] }, then: "October" },
+              { case: { $eq: ["$_id", 11] }, then: "November" },
+              { case: { $eq: ["$_id", 12] }, then: "December" },
+            ],
+            default: "Unknown",
+          },
+        },
+        count: 1,
+        _id: 0,
+      },
+    },
+    {
+      $sort: {
+        monthNumber: 1,
+      },
+    },
+  ]);
+
+  if (posts.length === 0 || !posts) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No pending posts found"));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, requestPendingFoodPostsCounts, "OK"));
+});
+
 module.exports = {
   checkIsAdminLogin,
   registerAdmin,
@@ -532,4 +692,7 @@ module.exports = {
   deletePostAsAdminPrevilage,
   searchUserForAdmin,
   getAllDonorAndRecipients,
+  getAllFoodPostsMonthWise,
+  getDeliveredPosts,
+  requestPendingPosts,
 };

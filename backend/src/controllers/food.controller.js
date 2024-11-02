@@ -241,7 +241,7 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
         `
   );
 
-  foodData.status = "approved";
+  foodData.status = "delivered";
   foodData.verifyOTP = undefined;
   await foodData.save({
     validateBeforeSave: false,

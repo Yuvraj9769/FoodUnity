@@ -6,15 +6,26 @@ import TotalDonorsGaugeChart from "./TotalDonorsGaugeChart";
 import TotalRecipientsRadialBarChart from "./TotalRecipientsRadialBarChart";
 import { useEffect, useState } from "react";
 import { getAllDonorAndRecipients } from "../api/user.api";
-import { setGraphData } from "../features/adminFeatures";
+import { setGraphData, setLineChartGraphData } from "../features/adminFeatures";
 import toast from "react-hot-toast";
 import PageLoader from "./PageLoader";
 import { useDispatch, useSelector } from "react-redux";
+import { getAllFoodPostsMonthWise } from "../api/food.api";
 
 const MainDashboard = () => {
   const [loadingData, setLoadingData] = useState(true);
+  const [postCounts, setPostsCounts] = useState(0);
   const graphData = useSelector((state) => state.graphData);
   const dispatch = useDispatch();
+
+  const lineChartGraphData = useSelector((state) => state.lineChartGraphData);
+
+  const getTotalPostsCount = (postsData) => {
+    let countOfPosts = 0;
+
+    postsData.map((e) => (countOfPosts += e.count));
+    setPostsCounts(countOfPosts);
+  };
 
   useEffect(() => {
     if (Object.keys(graphData[0]).length === 0) {
@@ -37,7 +48,21 @@ const MainDashboard = () => {
         });
     }
 
-    if (graphData.length !== 0) {
+    if (
+      lineChartGraphData.length === 0 ||
+      !lineChartGraphData ||
+      postCounts === 0
+    ) {
+      getAllFoodPostsMonthWise()
+        .then((data) => {
+          dispatch(setLineChartGraphData(data));
+          getTotalPostsCount(data);
+        })
+        .catch((error) => toast.error(error.message))
+        .finally(() => setLoadingData(false));
+    }
+
+    if (graphData.length !== 0 || lineChartGraphData.length !== 0) {
       setLoadingData(false);
     }
   }, []);
@@ -66,7 +91,7 @@ const MainDashboard = () => {
             <div className="bg-gradient-to-r from-lime-500 to-green-600 dark:from-lime-600 dark:to-green-800 p-4 rounded shadow text-white">
               <h2 className="text-xl font-bold">Total Posts</h2>
               <p className="text-3xl font-semibold">
-                <CountUp start={0} end={320} duration={5} />
+                <CountUp start={0} end={postCounts} duration={5} />
               </p>
             </div>
 
