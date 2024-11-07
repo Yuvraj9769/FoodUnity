@@ -1,7 +1,3 @@
-0) Working on dashboard login - register done just forget password remains.
-
-3)Reporting and Analytics:
-Donation Reports: Donors can generate reports on their donation history, including the quantity of food donated and the impact of their contributions.
-
-Admin : - 
-2) Track and report on how much food is donated and how many people are helped, with monthly reports provided specifically for admins to monitor the platform’s success and impact.
+0) Add Infinite scroller for showing posts for users,admin,donors.
+1) Add deleted Posts by donors show to admin
+2) Add 2fa login

@@ -101,6 +101,22 @@ const resetAdminPassword = async (data) => {
   }
 };
 
+const logoutAdmin = async () => {
+  try {
+    const response = await axios.get(`${SERVER}/admin/logout-admin`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage =
+      error?.response?.data?.message || "Sorry something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
 export {
   isAdminLoggedIn,
   register_Admin,
@@ -108,4 +124,5 @@ export {
   sendForgetPasswordMail,
   checkTokenExpiry,
   resetAdminPassword,
+  logoutAdmin,
 };

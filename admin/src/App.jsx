@@ -11,6 +11,7 @@ import { Outlet } from "react-router-dom";
 
 function App() {
   const [darkMode, toggleDarkMode] = useState(true);
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -51,7 +52,9 @@ function App() {
   }, []);
 
   return (
-    <adminContext.Provider value={{ darkMode, toggleDarkMode }}>
+    <adminContext.Provider
+      value={{ darkMode, toggleDarkMode, isSidebarVisible, setSidebarVisible }}
+    >
       <div className="flex h-screen dark:bg-gray-900 bg-gray-100">
         <Sidebar />
         <div className="flex-1 flex flex-col min-h-screen justify-between">

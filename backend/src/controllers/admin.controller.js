@@ -204,6 +204,10 @@ const resetPasswordSendMail = asyncHandler(async (req, res) => {
        <p>If you did not request this, please ignore this email.</p>`
   );
 
+  admin.passwordResetToken = passwordResetToken;
+  admin.passwordResetExpires = new Date(Date.now() + 15 * 60 * 1000);
+  await admin.save();
+
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Email sent, please check your email"));
@@ -408,6 +412,10 @@ const updateUserDataAsAdminPrivilage = asyncHandler(async (req, res) => {
 });
 
 const getAllFoodPostsForAdmin = asyncHandler(async (req, res) => {
+  console.log(req.params);
+
+  const { page = 1, limit = 10 } = req.params;
+
   const foods = await foodModel.find({
     isDelete: false,
   });
@@ -677,6 +685,28 @@ const requestPendingPosts = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, requestPendingFoodPostsCounts, "OK"));
 });
 
+const logoutAdmin = asyncHandler(async (req, res) => {
+  const admin = await adminModel.findById(req.user.id);
+
+  if (!admin) {
+    return res.status(404).json(new ApiResponse(404, null, "Admin not found"));
+  }
+
+  admin.isLogin = false;
+  await admin.save();
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "Lax",
+  };
+
+  return res
+    .clearCookie("admin-005-Login", options)
+    .status(200)
+    .json(new ApiResponse(200, null, "Admin logged out successfully"));
+});
+
 module.exports = {
   checkIsAdminLogin,
   registerAdmin,
@@ -695,4 +725,5 @@ module.exports = {
   getAllFoodPostsMonthWise,
   getDeliveredPosts,
   requestPendingPosts,
+  logoutAdmin,
 };

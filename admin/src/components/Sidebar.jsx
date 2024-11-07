@@ -1,14 +1,66 @@
-import { NavLink } from "react-router-dom";
-import { setSearchedData } from "../features/adminFeatures";
-import { useDispatch } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
+import { setLogin, setSearchedData } from "../features/adminFeatures";
+import { useDispatch, useSelector } from "react-redux";
+import { MdLogout } from "react-icons/md";
+import toast from "react-hot-toast";
+import { logoutAdmin } from "../api/admin.api";
+import { useContext } from "react";
+import adminContext from "../store/adminContext";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { darkMode, toggleDarkMode, isSidebarVisible, setSidebarVisible } =
+    useContext(adminContext);
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+
+  const logout = async () => {
+    if (isLoggedIn) {
+      try {
+        const res = await logoutAdmin();
+        toast.success(res.message);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        navigate("/");
+        dispatch(setLogin(false));
+      }
+    }
+  };
 
   return (
-    <aside className="bg-gray-200 dark:bg-gray-900 w-64 min-h-screen p-4 border-r border-r-gray-500">
+    <aside
+      className={`bg-gray-200 absolute md:relative md:left-0 md:top-0 dark:bg-gray-900 w-64 md:max-w-64 2xl:w-[25%] 2xl:max-w-[600px] min-h-screen p-4 border-r transition-all duration-700 md:transition-none border-r-gray-500 ${
+        isSidebarVisible ? "left-0 top-0 w-full z-20" : "-left-full"
+      }`}
+    >
       <ul className="space-y-2">
-        <li onClick={() => dispatch(setSearchedData([]))}>
+        <li
+          onClick={() => setSidebarVisible(!isSidebarVisible)}
+          className="md:hidden text-red-600 inline-flex items-center justify-end w-full"
+        >
+          <span className="text-2xl">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="1.5em"
+              height="1.5em"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M21 15.61L19.59 17l-5.01-5l5.01-5L21 8.39L17.44 12zM3 6h13v2H3zm0 7v-2h10v2zm0 5v-2h13v2z"
+              ></path>
+            </svg>
+          </span>
+        </li>
+        <li
+          onClick={() => {
+            dispatch(setSearchedData([]));
+            isSidebarVisible && setSidebarVisible(!isSidebarVisible);
+          }}
+        >
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -21,7 +73,12 @@ const Sidebar = () => {
             Dashboard
           </NavLink>
         </li>
-        <li onClick={() => dispatch(setSearchedData([]))}>
+        <li
+          onClick={() => {
+            dispatch(setSearchedData([]));
+            isSidebarVisible && setSidebarVisible(!isSidebarVisible);
+          }}
+        >
           <NavLink
             to="/users-admin"
             className={({ isActive }) =>
@@ -34,7 +91,12 @@ const Sidebar = () => {
             Users
           </NavLink>
         </li>
-        <li onClick={() => dispatch(setSearchedData([]))}>
+        <li
+          onClick={() => {
+            dispatch(setSearchedData([]));
+            isSidebarVisible && setSidebarVisible(!isSidebarVisible);
+          }}
+        >
           <NavLink
             to="/users-posts-admin"
             className={({ isActive }) =>
@@ -47,7 +109,12 @@ const Sidebar = () => {
             Posts
           </NavLink>
         </li>
-        <li onClick={() => dispatch(setSearchedData([]))}>
+        <li
+          onClick={() => {
+            dispatch(setSearchedData([]));
+            isSidebarVisible && setSidebarVisible(!isSidebarVisible);
+          }}
+        >
           <NavLink
             to="/admin-analytics"
             className={({ isActive }) =>
@@ -59,6 +126,35 @@ const Sidebar = () => {
           >
             Analytics
           </NavLink>
+        </li>
+        <li
+          className="flex items-center gap-4 bg-slate-900  text-center py-2 px-4 rounded-3xl border border-[#cfcfcf] cursor-pointer text-slate-50 text-lg hover:bg-slate-800 duration-500 max-w-[50%] md:w-auto md:max-w-full"
+          onClick={() => toggleDarkMode(!darkMode)}
+        >
+          {darkMode ? (
+            <p className="inline-flex items-center gap-3 ">
+              <Icon
+                icon="ic:round-light-mode"
+                className="text-2xl text-red-600"
+              />
+              Light
+            </p>
+          ) : (
+            <p className="inline-flex items-center gap-3 ">
+              <Icon
+                icon="tdesign:mode-dark"
+                className="text-2xl text-red-600"
+              />
+              Dark
+            </p>
+          )}
+        </li>
+        <li
+          onClick={logout}
+          className="flex items-center text-slate-50 gap-4 bg-slate-900 text-lg text-center py-2 px-4 cursor-pointer rounded-3xl border border-[#cfcfcf] hover:bg-slate-800 duration-500 max-w-[50%] md:w-auto md:max-w-full"
+        >
+          <MdLogout />
+          Logout
         </li>
       </ul>
     </aside>
