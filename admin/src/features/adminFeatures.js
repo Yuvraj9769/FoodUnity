@@ -5,6 +5,8 @@ const initialState = {
   loading: false,
   postsData: [],
   usersData: [],
+  deletedPostsData: [],
+  searchDonorDeletedPosts: [],
   adminData: [],
   searchedData: [],
   graphData: [{}, {}],
@@ -51,6 +53,12 @@ const adminSlice = createSlice({
     setBarChartGraphData: (state, action) => {
       state.barChartGraphData = action.payload;
     },
+    setDeletedPostsData: (state, action) => {
+      state.deletedPostsData = action.payload;
+    },
+    setSearchDonorDeletedPosts: (state, action) => {
+      state.searchDonorDeletedPosts = action.payload;
+    },
   },
 });
 
@@ -66,6 +74,8 @@ export const {
   setGraphData,
   setLineChartGraphData,
   setBarChartGraphData,
+  setDeletedPostsData,
+  setSearchDonorDeletedPosts,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

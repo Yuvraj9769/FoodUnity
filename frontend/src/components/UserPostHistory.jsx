@@ -229,7 +229,8 @@ const UserPostHistory = () => {
                     className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full ${
                       userHistoryPosts[ind]?.status === "requested" ||
                       userHistoryPosts[ind]?.status === "approved" ||
-                      userHistoryPosts[ind]?.status === "OTP Expired"
+                      userHistoryPosts[ind]?.status === "OTP Expired" ||
+                      userHistoryPosts[ind]?.status === "rejected"
                         ? "opacity-70 pointer-events-none"
                         : ""
                     }`}

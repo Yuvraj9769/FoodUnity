@@ -17,6 +17,7 @@ import DashboardUser from "./components/DashboardUser.jsx";
 import UpdateUserForm from "./components/UpdateUserForm.jsx";
 import PostsForAdmin from "./components/PostsForAdmin.jsx";
 import Analytics from "./components/Analytics.jsx";
+import DeletedDonorPosts from "./components/DeletedDonorPosts.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "/users-posts-admin",
         element: <PostsForAdmin />,
+      },
+      {
+        path: "/donors-deleted-posts-admin",
+        element: <DeletedDonorPosts />,
       },
       {
         path: "/admin-analytics",

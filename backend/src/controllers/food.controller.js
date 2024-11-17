@@ -88,16 +88,14 @@ const createPost = asyncHandler(async (req, res) => {
     foodImage: cloudinaryResonse.secure_url,
   });
 
-  const createdFoodPost = await foodModel.findById(foodPost._id);
-
-  if (!createdFoodPost) {
+  if (!foodPost) {
     return res
       .status(500)
       .json(new ApiResponse(500, null, "Failed to create food post"));
   }
 
-  createdFoodPost.userId = req.user._id;
-  await createdFoodPost.save();
+  foodPost.userId = req.user._id;
+  await foodPost.save();
 
   res
     .status(201)
@@ -127,9 +125,15 @@ const getAllFoodPosts = asyncHandler(async (req, res) => {
 
   const foods = await foodModel.find({
     isDelete: false,
+    status: {
+      $nin: ["approved"],
+    },
+    // expiryTime: {
+    //   $gte: new Date(),
+    // },
   });
 
-  if (!foods) {
+  if (foods.length === 0 || !foods) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "No food posts found"));
@@ -151,10 +155,11 @@ const getAllFoodPosts = asyncHandler(async (req, res) => {
         requestStatus,
       };
     })
-    .filter(({ requestStatus, food }) => {
+    .filter(({ requestStatus }) => {
       return (
-        requestStatus != "OTP Expired" && requestStatus != "approved"
-        // && moment().diff(moment(food.createdAt), "days") < 1
+        requestStatus != "OTP Expired" &&
+        requestStatus != "approved" &&
+        requestStatus != "rejected"
       );
     });
 
@@ -579,6 +584,10 @@ const getFifteenKMPosts = asyncHandler(async (req, res) => {
     requesterId: req.user._id,
   });
 
+  if (requestedUserData.length === 0 || !requestedUserData) {
+    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  }
+
   const nearbyPosts = await foodModel
     .find({
       pickupCoordinates: {
@@ -593,6 +602,9 @@ const getFifteenKMPosts = asyncHandler(async (req, res) => {
           $maxDistance: distanceInKM * 1000,
         },
       },
+      expiryTime: {
+        $gte: new Date(),
+      },
     })
     .select("-pickupCoordinates");
 
@@ -602,7 +614,11 @@ const getFifteenKMPosts = asyncHandler(async (req, res) => {
 
   const newFilteredPostsWithRequestStatus = nearbyPosts.map((e) => {
     const sampleData = requestedUserData.filter((e2) => {
-      return e2.foodId.toString() === e._id.toString();
+      return (
+        e2.foodId.toString() === e._id.toString() &&
+        e2.status !== "rejected" &&
+        e2.status !== "OTP Expired"
+      );
     });
 
     const objData = {

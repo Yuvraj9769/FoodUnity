@@ -23,6 +23,7 @@ import { AiOutlineHistory } from "react-icons/ai";
 import PropTypes from "prop-types";
 import { MdFeedback } from "react-icons/md";
 import searchContext from "../store/searchContext";
+import { GoDotFill } from "react-icons/go";
 
 const Profile = ({ logout }) => {
   const userData = useSelector((state) => state.userData);
@@ -69,7 +70,7 @@ const Profile = ({ logout }) => {
 
   return (
     <div
-      className="bg-slate-50 dark:bg-slate-950 font-semibold text-black dark:text-slate-50 p-6 h-auto absolute left-[-255px] rounded-xl border border-[#dadada] top-[75px] flex flex-col items-center gap-4 max-w-[255px] w-[250px] z-50"
+      className="bg-slate-50 dark:bg-slate-950 font-semibold text-black dark:text-slate-50 p-6 h-auto absolute left-[-190px] rounded-xl border border-[#dadada] top-[64px] flex flex-col items-center gap-4 max-w-[255px] w-[250px] z-50"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="font-semibold text-3xl h-[80px] w-[80px] rounded-full inline-flex items-center justify-center relative mb-2">
@@ -137,12 +138,14 @@ const Profile = ({ logout }) => {
           to="/foods/notifications"
           onClick={() => {
             dispatch(setSearchedData([]));
+            dispatch(setProfile(!profile));
             setSearchData({ searchQuery: "" });
           }}
           className="text-base w-full inline-flex py-1 items-center cursor-pointer border-b border-b-transparent hover:border-b-slate-700 duration-500 gap-3 overflow-hidden text-ellipsis"
         >
           <IoMdNotifications />
           Notifications
+          <GoDotFill className="text-red-600 animate-pulse" />
         </Link>
       ) : (
         <Link

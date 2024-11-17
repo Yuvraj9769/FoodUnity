@@ -199,7 +199,7 @@ function App() {
           }
         });
     }
-  }, [userData, isJWTExpired]);
+  }, [isJWTExpired]); //Removed userData from dependency.
 
   return (
     <div className="flex flex-col items-center gap-4 dark:bg-slate-950 bg-slate-50 h-full">

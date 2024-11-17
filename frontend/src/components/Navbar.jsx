@@ -117,41 +117,45 @@ const Navbar = ({ setIsJWTExpired }) => {
             </NavLink>
           </li>
         ) : donor ? (
-          <li
-            onClick={() => {
-              dispatch(setSearchedData([]));
-              setSearchData({ searchQuery: "" });
-            }}
-          >
-            <NavLink
-              to="/posts"
-              className={(e) => {
-                return e.isActive
-                  ? "text-black font-semibold dark:text-red-500"
-                  : " ";
+          isLoggedIn && (
+            <li
+              onClick={() => {
+                dispatch(setSearchedData([]));
+                setSearchData({ searchQuery: "" });
               }}
             >
-              Posts
-            </NavLink>
-          </li>
+              <NavLink
+                to="/posts"
+                className={(e) => {
+                  return e.isActive
+                    ? "text-black font-semibold dark:text-red-500"
+                    : " ";
+                }}
+              >
+                Posts
+              </NavLink>
+            </li>
+          )
         ) : (
-          <li
-            onClick={() => {
-              dispatch(setSearchedData([]));
-              setSearchData({ searchQuery: "" });
-            }}
-          >
-            <NavLink
-              to="/getposts"
-              className={(e) => {
-                return e.isActive
-                  ? "text-black font-semibold dark:text-red-500"
-                  : " ";
+          secureLocalStorage.getItem("recipient") && (
+            <li
+              onClick={() => {
+                dispatch(setSearchedData([]));
+                setSearchData({ searchQuery: "" });
               }}
             >
-              Posts
-            </NavLink>
-          </li>
+              <NavLink
+                to="/getposts"
+                className={(e) => {
+                  return e.isActive
+                    ? "text-black font-semibold dark:text-red-500"
+                    : " ";
+                }}
+              >
+                Posts
+              </NavLink>
+            </li>
+          )
         )}
 
         {isLoggedIn ? (

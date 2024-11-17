@@ -39,27 +39,6 @@ const FoodCardsUsers = () => {
   const [loading, setLoading] = useState(true);
   const [filtedPosts, setFilteredPosts] = useState([]);
 
-  useEffect(() => {
-    const user = secureLocalStorage.getItem("recipient");
-    setTimeout(() => {
-      if (user && postData.length == 0) {
-        (async () => {
-          try {
-            const data = await getAllPostsForUser();
-            dispatch(setPostData(data));
-          } catch (error) {
-            toast.error(error.message);
-            navigate("/");
-          } finally {
-            setLoading(false);
-          }
-        })();
-      } else {
-        setLoading(false);
-      }
-    }, 200);
-  }, []);
-
   const sendReuest = async (id) => {
     try {
       setLoading(true);
@@ -94,8 +73,31 @@ const FoodCardsUsers = () => {
       setFilteredPosts(res.data);
     } catch (error) {
       toast.error(error.message);
+      setFilteredPosts([]);
+      checkandSetFilter(false);
     }
   };
+
+  useEffect(() => {
+    const user = secureLocalStorage.getItem("recipient");
+    setTimeout(() => {
+      if (user && postData.length == 0) {
+        (async () => {
+          try {
+            const data = await getAllPostsForUser();
+            dispatch(setPostData(data));
+          } catch (error) {
+            toast.error(error.message);
+            navigate("/");
+          } finally {
+            setLoading(false);
+          }
+        })();
+      } else {
+        setLoading(false);
+      }
+    }, 200);
+  }, []);
 
   return (
     <>

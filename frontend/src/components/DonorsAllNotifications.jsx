@@ -17,23 +17,9 @@ const DonorsAllNotifications = () => {
 
   const { searchData, handleOnChange, checkKey } = useContext(searchContext);
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const response = await getDonorsAllNotifications();
-        setNotifications(response);
-      } catch (error) {
-        toast.error(error.message);
-      }
-    };
-
-    setLoading(false);
-
-    fetchRequests();
-  }, []);
-
   const acceptOrRejectRequest = async (status, cardInd, foodId) => {
     try {
+      setLoading(true);
       const email = notifications[cardInd].requesterId.email;
       const data = {
         recipientEmail: email,
@@ -41,14 +27,29 @@ const DonorsAllNotifications = () => {
         foodId,
       };
       const response = await rejectOrAcceptRequest(data);
+      setNotifications(response.data);
       toast.success(response.message);
-
-      const res = await getDonorsAllNotifications();
-      setNotifications(res);
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await getDonorsAllNotifications();
+        setNotifications(response);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, []);
 
   return (
     <>

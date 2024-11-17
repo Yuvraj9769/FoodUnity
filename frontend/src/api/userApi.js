@@ -127,7 +127,6 @@ const updateProfileData = async (data) => {
         "Content-Type": "application/json",
       },
     });
-    console.log(res);
     return res.data;
   } catch (error) {
     const errorMessage =

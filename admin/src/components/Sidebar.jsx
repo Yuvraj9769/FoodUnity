@@ -109,6 +109,26 @@ const Sidebar = () => {
             Posts
           </NavLink>
         </li>
+
+        <li
+          onClick={() => {
+            dispatch(setSearchedData([]));
+            isSidebarVisible && setSidebarVisible(!isSidebarVisible);
+          }}
+        >
+          <NavLink
+            to="/donors-deleted-posts-admin"
+            className={({ isActive }) =>
+              `block text-gray-800 dark:text-gray-200 p-2 rounded hover:bg-gradient-to-r from-pink-500 to-purple-600 hover:dark:from-pink-600 hover:dark:to-purple-800 ${
+                isActive &&
+                "bg-gradient-to-r from-pink-500 to-purple-600 dark:from-pink-600 dark:to-purple-800"
+              }`
+            }
+          >
+            Donor&apos;s deleted Posts
+          </NavLink>
+        </li>
+
         <li
           onClick={() => {
             dispatch(setSearchedData([]));

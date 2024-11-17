@@ -17,6 +17,8 @@ const {
   getDeliveredPosts,
   requestPendingPosts,
   logoutAdmin,
+  getDonorDeletedPosts,
+  searchDonorDeletedPosts,
 } = require("../controllers/admin.controller");
 const verifyAdmin = require("../middlewares/admin.verifyLogin.middleware");
 
@@ -47,5 +49,7 @@ router.route("/monthWisePosts").get(verifyAdmin, getAllFoodPostsMonthWise);
 router.route("/deliveredPosts").get(verifyAdmin, getDeliveredPosts);
 router.route("/reqPendingPosts").get(verifyAdmin, requestPendingPosts);
 router.route("/logout-admin").get(verifyAdmin, logoutAdmin);
+router.route("/deletedPosts").get(verifyAdmin, getDonorDeletedPosts);
+router.route("/searchDeletePost").post(verifyAdmin, searchDonorDeletedPosts);
 
 module.exports = router;

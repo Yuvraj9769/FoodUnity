@@ -439,6 +439,7 @@ const getSearchedPost = asyncHandler(async (req, res) => {
   }
 
   const foodPosts = await foodModel.find({
+    isDelete: false,
     $or: [
       { foodTitle: { $regex: searchQuery, $options: "i" } },
       {
@@ -707,6 +708,50 @@ const logoutAdmin = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Admin logged out successfully"));
 });
 
+const getDonorDeletedPosts = asyncHandler(async (req, res) => {
+  const foodPosts = await foodModel.find({
+    isDelete: true,
+  });
+
+  if (foodPosts.length === 0 || !foodPosts) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No deleted posts found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, foodPosts, "OK"));
+});
+
+const searchDonorDeletedPosts = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.body;
+
+  if (!searchQuery) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Search query is required"));
+  }
+
+  const searchDeletedPosts = await foodModel.find({
+    isDelete: true,
+    $or: [
+      {
+        foodTitle: { $regex: searchQuery, $options: "i" },
+      },
+      {
+        foodType: { $regex: `^${searchQuery}$`, $options: "i" },
+      },
+    ],
+  });
+
+  if (searchDeletedPosts.length === 0 || !searchDeletedPosts) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No deleted posts found"));
+  }
+
+  return res.status(200).json(new ApiResponse(200, searchDeletedPosts, "OK"));
+});
+
 module.exports = {
   checkIsAdminLogin,
   registerAdmin,
@@ -726,4 +771,6 @@ module.exports = {
   getDeliveredPosts,
   requestPendingPosts,
   logoutAdmin,
+  getDonorDeletedPosts,
+  searchDonorDeletedPosts,
 };

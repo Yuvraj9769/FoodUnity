@@ -34,6 +34,12 @@ const sendOrderMailRequest = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Request already exists"));
   }
 
+  // if (moment(foodPost.expiryTime).isBefore(moment())) {
+  //   return res
+  //     .status(400)
+  //     .json(new ApiResponse(400, null, "Food Post has been expired"));
+  // }
+
   const newRequest = await requestModel.create({
     foodId: id,
     requesterId: req.user._id,
@@ -131,7 +137,7 @@ const getDonorsAllNotifications = asyncHandler(async (req, res) => {
       select:
         "-quantity -pickupTime -contactName -contactNumber -userId -status",
     })
-    .select("-donorId -requesterId -status -updatedAt")
+    .select("-donorId -requesterId -updatedAt")
     .populate({
       path: "requesterId",
       select: "username email -_id",
@@ -180,11 +186,11 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
     "MMMM D, YYYY hh:mm:ss A"
   );
 
-  if (moment(foodData.expiryTime).isBefore(moment())) {
-    return res
-      .status(400)
-      .json(new ApiResponse(400, null, "Food Post has been expired"));
-  }
+  // if (moment(foodData.expiryTime).isBefore(moment())) {
+  //   return res
+  //     .status(400)
+  //     .json(new ApiResponse(400, null, "Food Post has been expired"));
+  // }
 
   const requestData = await requestModel
     .findOne({
@@ -199,10 +205,91 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
       .json(new ApiResponse(404, null, "Request Not Found"));
   }
 
+  if (foodData.status === "approved") {
+    requestData.status = "rejected";
+    await requestData.save();
+
+    await sendMail(
+      recipientEmail,
+      `Request Rejected Notification`,
+      "Hello",
+      `<p>Hello <b>${recipient.username}</b>,</p>
+         <p>We wanted to inform you that your food request has been <b>${"Rejected".toLowerCase()}</b> by donor <b>${username}.</b></p>
+         <p>Unfortunately, the food post you requested has already been approved for another recipient.</p>
+         <p>Explore more food posts and stay connected with Food Unity!</p>
+         <p>Thank you for being a part of Food Unity.</p>
+         <p>Best regards,</p>
+         <p><b>Food Unity Team.</b></p>`
+    );
+
+    return res
+      .status(400)
+      .json(
+        new ApiResponse(
+          400,
+          null,
+          "The post has already been approved for another recipient."
+        )
+      );
+  }
+
   const reqFinalStatus = reqStatus === "Accept" ? "approved" : "rejected";
 
   requestData.status = reqFinalStatus;
   await requestData.save();
+
+  foodData.status = reqFinalStatus;
+  await foodData.save({
+    validateBeforeSave: false,
+  });
+
+  const notificationPosts = await requestModel
+    .find()
+    .populate({
+      path: "foodId",
+      select:
+        "-quantity -pickupTime -contactName -contactNumber -userId -status",
+    })
+    .select("-donorId -requesterId -updatedAt")
+    .populate({
+      path: "requesterId",
+      select: "username email -_id",
+    });
+
+  let updatedNotifications = await Promise.all(
+    notificationPosts
+      .filter(
+        (item) => item.status !== "OTP Expired" && item.status !== "approved"
+      )
+      .map(async (item) => {
+        if (
+          foodId === item.foodId._id.toString() &&
+          item.status !== "approved"
+        ) {
+          item.status = "rejected";
+          await item.save({
+            validateBeforeSave: false,
+          });
+          await sendMail(
+            item.requesterId.email,
+            `Request Rejected Notification`,
+            "Hello",
+            `<p>Hello <b>${item.requesterId.username}</b>,</p>
+           <p>We wanted to inform you that your food request has been <b>${"Rejected".toLowerCase()}</b> by donor <b>${username}.</b></p>
+           <p>Unfortunately, the food post you requested has already been approved for another recipient.</p>
+           <p>Explore more food posts and stay connected with Food Unity!</p>
+           <p>Thank you for being a part of Food Unity.</p>
+           <p>Best regards,</p>
+           <p><b>Food Unity Team.</b></p>`
+          );
+        }
+        return item;
+      })
+  );
+
+  updatedNotifications = updatedNotifications.filter(
+    (item) => item.status !== "rejected"
+  );
 
   if (reqFinalStatus === "approved") {
     const otp = otpGenerator.generate(6, {
@@ -220,16 +307,16 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
 
     await sendMail(
       recipientEmail,
-      `Request ${reqStatus} Notification`,
+      `Request ${reqFinalStatus} Notification`,
       "Hello",
       `<p>Hello <b>${recipient.username}</b>,</p>
-      <p>We wanted to inform you that your food request has been <b>${reqStatus.toLowerCase()}</b> by donor <b>${username}.</b></p>
+      <p>We wanted to inform you that your food request has been <b>${reqFinalStatus.toLowerCase()}</b> by donor <b>${username}.</b></p>
       <p>Your OTP for verification is: <b>${otp}</b></p>
       <p><strong>⚠️ Important Notice:</strong> Your OTP is valid until <span style="color: #e60000; font-weight: bold;">${foodOTPExpiryTime}</span>. <br/> Please use it before this time to ensure it's accepted.</p>
       <p>You can view the location of the donor using the following link: <a href="https://www.google.com/maps?q=${
-        requestData.donorId.locationCoordinates.lat
+        requestData.donorId.pickupCoordinates.coordinates[0]
       },${
-        requestData.donorId.locationCoordinates.long
+        requestData.donorId.pickupCoordinates.coordinates[1]
       }" target="_blank">View Location</a></p>
       <p>Thank you for being a part of Food Unity.</p>
       <p>Explore more food posts and stay connected with Food Unity!</p>
@@ -239,10 +326,10 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
   } else {
     await sendMail(
       recipientEmail,
-      `Request ${reqStatus} Notification`,
+      `Request ${reqFinalStatus} Notification`,
       "Hello",
       `<p>Hello <b>${recipient.username}</b>,</p>
-         <p>We wanted to inform you that your food request has been <b>${reqStatus.toLowerCase()}</b> by donor <b>${username}.</b></p>
+         <p>We wanted to inform you that your food request has been <b>${reqFinalStatus.toLowerCase()}</b> by donor <b>${username}.</b></p>
          <p>Explore more food posts and stay connected with Food Unity!</p>
          <p>Thank you for being a part of Food Unity.</p>
          <p>Best regards,</p>
@@ -252,7 +339,7 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "Request Status Update"));
+    .json(new ApiResponse(200, updatedNotifications, "Request Status Update"));
 });
 
 const searchNotification = asyncHandler(async (req, res) => {
