@@ -1,3 +1,6 @@
 0) Add Infinite scroller for showing posts for users,admin,donors.
 1) Add 2fa login for admin.
 2) Add payment gateway.
+
+Todos : - 
+comment out some filters used in posts like dont get expiry foods, get 15km posts only not exired ones etc do changes.
