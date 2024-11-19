@@ -412,9 +412,9 @@ const updateUserDataAsAdminPrivilage = asyncHandler(async (req, res) => {
 });
 
 const getAllFoodPostsForAdmin = asyncHandler(async (req, res) => {
-  console.log(req.params);
+  // console.log(req.params);
 
-  const { page = 1, limit = 10 } = req.params;
+  // const { page = 1, limit = 10 } = req.params;
 
   const foods = await foodModel.find({
     isDelete: false,
