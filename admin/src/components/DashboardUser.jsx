@@ -89,7 +89,7 @@ const DashboardUser = () => {
         });
     }
 
-    if (usersData.length !== 0 || usersData) {
+    if (usersData.length !== 0) {
       setLoadingData(false);
     }
   }, []);

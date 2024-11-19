@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import secureLocalStorage from "react-secure-storage";
@@ -15,6 +16,7 @@ const LoginOrSignupForm = () => {
 
   const postData = useSelector((state) => state.postData);
   const [disPassword, setDispassword] = useState(false);
+  const [dataProcessing, setDataProcessing] = useState(false);
   const username = useRef("");
   const password = useRef("");
   const check = useRef(false);
@@ -34,6 +36,8 @@ const LoginOrSignupForm = () => {
       toast.error("Password is required");
       return;
     }
+
+    setDataProcessing(true);
 
     const data = {
       username: enteredUsername,
@@ -82,6 +86,8 @@ const LoginOrSignupForm = () => {
       if (error.message === "Please register") {
         navigate("/register");
       }
+    } finally {
+      setDataProcessing(false);
     }
   };
 
@@ -140,9 +146,19 @@ const LoginOrSignupForm = () => {
           </div>
           <button
             type="submit"
-            className="w-[88%] text-slate-50 rounded-3xl text-xl sm:text-2xl py-3 bg-gradient-to-r from-[#4A57CE] to-[#B151C2]"
+            className="w-[88%] text-slate-50 rounded-3xl text-xl sm:text-2xl py-3 bg-gradient-to-r from-[#4A57CE] to-[#B151C2] inline-flex items-center gap-2 justify-center"
           >
-            Login
+            {dataProcessing ? (
+              <>
+                <Icon
+                  icon="line-md:loading-twotone-loop"
+                  className="text-2xl font-semibold"
+                />
+                Processing
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
         </div>
         <div className="flex flex-col w-full gap-3 items-center">

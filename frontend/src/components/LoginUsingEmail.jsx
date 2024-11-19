@@ -9,6 +9,7 @@ import { FaEyeSlash } from "react-icons/fa";
 import validator from "validator";
 import { loginUser } from "../api/userApi";
 import { getAllPostsForUser, getDonorPostedPosts } from "../api/foodApi";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 const LoginUsingEmail = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const LoginUsingEmail = () => {
   const postData = useSelector((state) => state.postData);
 
   const [disPassword, setDispassword] = useState(false);
+  const [dataProcessing, setDataProcessing] = useState(false);
   const email = useRef("");
   const password = useRef("");
   const check = useRef(false);
@@ -33,6 +35,8 @@ const LoginUsingEmail = () => {
       toast.error("password is required");
       return;
     }
+
+    setDataProcessing(true);
 
     const data = {
       email: email.current.value,
@@ -79,6 +83,8 @@ const LoginUsingEmail = () => {
       if (error.message === "Please register") {
         navigate("/register");
       }
+    } finally {
+      setDataProcessing(false);
     }
   };
 
@@ -129,9 +135,19 @@ const LoginUsingEmail = () => {
           </div>
           <button
             type="submit"
-            className="w-[88%] text-slate-50 rounded-3xl text-2xl py-3 bg-gradient-to-r from-[#4A57CE] to-[#B151C2]"
+            className="w-[88%] text-slate-50 rounded-3xl text-2xl py-3 bg-gradient-to-r from-[#4A57CE] to-[#B151C2] inline-flex items-center gap-2 justify-center"
           >
-            Login
+            {dataProcessing ? (
+              <>
+                <Icon
+                  icon="line-md:loading-twotone-loop"
+                  className="text-2xl font-semibold"
+                />
+                Processing
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
         </div>
         <div className="flex flex-col w-full gap-3 items-center">
