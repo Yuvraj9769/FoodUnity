@@ -192,7 +192,7 @@ const resetPasswordSendMail = asyncHandler(async (req, res) => {
     return res.status(500).json(new ApiResponse(500, null, "Please try later"));
   }
 
-  const url = `${process.env.FRONTEND_SERVER}admin-reset-password/${passwordResetToken}`;
+  const url = `${process.env.ADMIN_FRONTEND_SERVER}admin-reset-password/${passwordResetToken}`;
 
   await sendPasswordResetMail(
     admin?.email,
