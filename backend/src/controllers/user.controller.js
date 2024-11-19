@@ -151,7 +151,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
-      sameSite: "Lax",
+      // sameSite: "Lax",
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
     };
     res.cookie("auth_005_Login-l", accessToken, options);
@@ -159,7 +159,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
-      sameSite: "Lax",
+      // sameSite: "Lax",
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day from now
     };
     res.cookie("auth_005_Login-s", accessToken, options);
@@ -312,7 +312,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
-    sameSite: "Lax",
+    // sameSite: "Lax",
   };
 
   if (rememberme) {

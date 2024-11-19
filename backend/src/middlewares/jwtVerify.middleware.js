@@ -22,8 +22,6 @@ const verifyJwt = asyncHandler(async (req, res, next) => {
     decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY_LONG);
   }
 
-  console.log("Token = ", token);
-
   if (!token) {
     return res
       .status(401)
