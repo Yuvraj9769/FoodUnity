@@ -9,7 +9,18 @@ app.use(cookieParser());
 app.use(express.static("public"));
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || process.env.ADMIN_CORS_ORIGIN,
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        process.env.CORS_ORIGIN,
+        process.env.ADMIN_CORS_ORIGIN,
+      ];
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
