@@ -3,4 +3,7 @@
 2) Add payment gateway.
 
 Todos : - 
+
+IMP Todo: - Some configuration changes due to deployment.
+
 comment out some filters used in posts like dont get expiry foods, get 15km posts only not exired ones etc do changes.
