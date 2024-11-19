@@ -114,8 +114,6 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  console.log("Calling User Login");
-
   const {
     email = "email",
     username = "username",
