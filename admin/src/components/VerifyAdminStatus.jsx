@@ -41,6 +41,8 @@ const VerifyAdminStatus = ({ children }) => {
 
     setClassByOSMode();
 
+    console.log("Called use effect");
+
     checkLoginStatus()
       .then((data) => {
         if (data.statusCode === 200 && data.success === true) {
@@ -51,6 +53,7 @@ const VerifyAdminStatus = ({ children }) => {
         }
       })
       .catch(() => {
+        console.log("Calling catch");
         dispatch(setLogin(false));
         setTimeout(() => {
           setStatusLoader(false);
