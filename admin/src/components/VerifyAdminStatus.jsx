@@ -50,8 +50,7 @@ const VerifyAdminStatus = ({ children }) => {
           }, 700);
         }
       })
-      .catch((error) => {
-        console.log("Calling catch = ", error);
+      .catch(() => {
         dispatch(setLogin(false));
         setTimeout(() => {
           setStatusLoader(false);
