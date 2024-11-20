@@ -9,6 +9,8 @@ const requestModel = require("../models/request.model");
 const foodModel = require("../models/food.model");
 
 const checkIsAdminLogin = asyncHandler(async (req, res) => {
+  console.log("Calling admin login?");
+
   const admin = await adminModel.findById(req.user.id);
 
   if (!admin) {
