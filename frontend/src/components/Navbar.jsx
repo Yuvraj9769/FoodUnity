@@ -64,6 +64,14 @@ const Navbar = ({ setIsJWTExpired }) => {
     dispatch(setProfile(!profile));
   };
 
+  const toggleDarkMode = () => {
+    dispatch(setDarkMode(!darkMode));
+
+    if (!localStorage.getItem("food-user-theme-pref")) {
+      localStorage.setItem("food-user-theme-pref", "true");
+    }
+  };
+
   useEffect(() => {
     if (!donor && postData.length != 0 && userData?.role === "donor") {
       setDonor(secureLocalStorage.getItem("donor"));
@@ -212,12 +220,7 @@ const Navbar = ({ setIsJWTExpired }) => {
             </Link>
           </div>
         )}
-        <li
-          className="text-2xl hover:cursor-pointer"
-          onClick={() => {
-            dispatch(setDarkMode(!darkMode));
-          }}
-        >
+        <li className="text-2xl hover:cursor-pointer" onClick={toggleDarkMode}>
           <NavLink
             className={(e) => (e.isActive ? "text-red-600" : " ")}
             onClick={(e) => e.preventDefault()}

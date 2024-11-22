@@ -38,7 +38,9 @@ function App() {
       }
     }
 
-    setClassByOSMode();
+    if (!localStorage.getItem("food_theme_pref")) {
+      setClassByOSMode();
+    }
 
     checkLoginStatus()
       .then((data) => {

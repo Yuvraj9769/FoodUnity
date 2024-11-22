@@ -147,7 +147,9 @@ function App() {
       }
     }
 
-    setClassByOSMode();
+    if (!localStorage.getItem("food-user-theme-pref")) {
+      setClassByOSMode();
+    }
 
     const user = secureLocalStorage.getItem("user");
     const donor = secureLocalStorage.getItem("donor");

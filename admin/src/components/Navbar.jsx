@@ -7,6 +7,14 @@ const Navbar = () => {
   const { darkMode, toggleDarkMode, isSidebarVisible, setSidebarVisible } =
     useContext(adminContext);
 
+  const changeTheme = () => {
+    toggleDarkMode(!darkMode);
+
+    if (!localStorage.getItem("food_theme_pref")) {
+      localStorage.setItem("food_theme_pref", "true");
+    }
+  };
+
   useEffect(() => {
     document.documentElement.className = darkMode ? "dark" : "light";
   });
@@ -20,7 +28,7 @@ const Navbar = () => {
         <div className="md:flex items-center hidden">
           <label
             htmlFor="toggle-mode"
-            onClick={() => toggleDarkMode(!darkMode)}
+            onClick={changeTheme}
             className="cursor-pointer text-red-600 text-lg"
           >
             {darkMode ? (
