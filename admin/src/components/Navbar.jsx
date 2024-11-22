@@ -9,15 +9,12 @@ const Navbar = () => {
 
   const changeTheme = () => {
     toggleDarkMode(!darkMode);
-
-    if (!localStorage.getItem("food_theme_pref")) {
-      localStorage.setItem("food_theme_pref", "true");
-    }
+    localStorage.setItem("food_theme_pref", !darkMode ? "dark" : "light");
   };
 
   useEffect(() => {
     document.documentElement.className = darkMode ? "dark" : "light";
-  });
+  }, [darkMode]);
 
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-md p-2 rounded-md">

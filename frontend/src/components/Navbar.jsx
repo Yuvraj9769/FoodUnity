@@ -66,10 +66,7 @@ const Navbar = ({ setIsJWTExpired }) => {
 
   const toggleDarkMode = () => {
     dispatch(setDarkMode(!darkMode));
-
-    if (!localStorage.getItem("food-user-theme-pref")) {
-      localStorage.setItem("food-user-theme-pref", "true");
-    }
+    localStorage.setItem("food-user-theme-pref", !darkMode ? "dark" : "light");
   };
 
   useEffect(() => {

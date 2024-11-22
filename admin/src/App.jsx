@@ -26,21 +26,26 @@ function App() {
 
   useEffect(() => {
     function setClassByOSMode() {
-      if (
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-      ) {
-        document.documentElement.className = "dark";
-        toggleDarkMode(true);
+      const storedTheme = localStorage.getItem("food_theme_pref");
+
+      if (storedTheme) {
+        document.documentElement.className = storedTheme;
+        toggleDarkMode(storedTheme === "dark");
       } else {
-        document.documentElement.className = "light";
-        toggleDarkMode(false);
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+          document.documentElement.className = "dark";
+          toggleDarkMode(true);
+        } else {
+          document.documentElement.className = "light";
+          toggleDarkMode(false);
+        }
       }
     }
 
-    if (!localStorage.getItem("food_theme_pref")) {
-      setClassByOSMode();
-    }
+    setClassByOSMode();
 
     checkLoginStatus()
       .then((data) => {

@@ -135,21 +135,26 @@ function App() {
 
   useEffect(() => {
     function setClassByOSMode() {
-      if (
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-      ) {
-        document.documentElement.className = "dark";
-        dispatch(setDarkMode(true));
+      const storedTheme = localStorage.getItem("food-user-theme-pref");
+
+      if (storedTheme) {
+        document.documentElement.className = storedTheme;
+        dispatch(setDarkMode(storedTheme === "dark"));
       } else {
-        document.documentElement.className = "light";
-        dispatch(setDarkMode(false));
+        if (
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+          document.documentElement.className = "dark";
+          dispatch(setDarkMode(true));
+        } else {
+          document.documentElement.className = "light";
+          dispatch(setDarkMode(false));
+        }
       }
     }
 
-    if (!localStorage.getItem("food-user-theme-pref")) {
-      setClassByOSMode();
-    }
+    setClassByOSMode();
 
     const user = secureLocalStorage.getItem("user");
     const donor = secureLocalStorage.getItem("donor");

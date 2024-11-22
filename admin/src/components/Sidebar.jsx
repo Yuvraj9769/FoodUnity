@@ -32,7 +32,7 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`bg-gray-200 absolute md:relative md:left-0 md:top-0 dark:bg-gray-900 w-64 md:max-w-64 2xl:w-[25%] 2xl:max-w-[600px] min-h-screen p-4 border-r transition-all duration-700 md:transition-none border-r-gray-500 ${
+      className={`bg-gray-200 absolute md:relative md:left-0 md:top-0 overflow-hidden dark:bg-gray-900 w-64 md:max-w-64 2xl:w-[25%] 2xl:max-w-[600px] min-h-screen p-4 border-r transition-all duration-700 md:transition-none border-r-gray-500 ${
         isSidebarVisible ? "left-0 top-0 w-full z-20" : "-left-full"
       }`}
     >
