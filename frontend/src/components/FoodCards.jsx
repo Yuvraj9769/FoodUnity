@@ -102,7 +102,7 @@ const FoodCards = () => {
             {searchedData.length !== 0
               ? searchedData.map((e, ind) => (
                   <div
-                    className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800"
+                    className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800 min-w-[313px]"
                     key={ind}
                   >
                     <img
@@ -208,7 +208,7 @@ const FoodCards = () => {
                 ))
               : postData.map((e, ind) => (
                   <div
-                    className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800"
+                    className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800 min-w-[313px]"
                     key={ind}
                   >
                     <img
@@ -220,7 +220,7 @@ const FoodCards = () => {
                       <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                         {e.foodTitle}
                       </div>
-                      <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll scroller-display-none scroll-smooth h-[92px]">
+                      <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll scroller-display-none scroll-smooth max-h-[92px]">
                         {e.description}
                       </p>
                       <div className="flex items-center justify-between w-full">

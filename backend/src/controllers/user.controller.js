@@ -325,15 +325,23 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const updateProfilePic = asyncHandler(async (req, res) => {
   const user = await userModel.findById(req.user._id);
+
   if (!user) {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
-  const response = await uploadOnCloudinary(req.file.path);
+
+  // const response = await uploadOnCloudinary(req.file.path);
+
+  // Upload the image to Cloudinary using the buffer from memory
+  const response = await uploadOnCloudinary(req.file.buffer);
+
   if (!response) {
     return res.status(500).json(new ApiResponse(500, null, "Please try later"));
   }
+
   user.profilePic = response.secure_url;
   await user.save();
+
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Profile pic updated"));

@@ -236,7 +236,7 @@ const FoodCardsUsers = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4">
             {searchedData.map((food, ind) => (
               <div
-                className="max-w-sm rounded-lg overflow-hidden shadow-lg dark:shadow-gray-700 shadow-slate-800 bg-white dark:bg-gray-800"
+                className="max-w-sm rounded-lg overflow-hidden shadow-lg dark:shadow-gray-700 shadow-slate-800 bg-white dark:bg-gray-800 min-w-[313px]"
                 key={ind}
               >
                 <img
@@ -353,7 +353,7 @@ const FoodCardsUsers = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 gap-4">
             {postData.map((food, ind) => (
               <div
-                className="max-w-sm rounded-lg overflow-hidden shadow-lg dark:shadow-gray-700 shadow-slate-800 bg-white dark:bg-gray-800"
+                className="max-w-sm rounded-lg overflow-hidden shadow-lg dark:shadow-gray-700 shadow-slate-800 bg-white dark:bg-gray-800 min-w-[313px]"
                 key={ind}
               >
                 <img
@@ -365,7 +365,7 @@ const FoodCardsUsers = () => {
                   <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
                     {food.food.foodTitle}
                   </div>
-                  <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll h-[92px] scroller-display-none">
+                  <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll max-h-[92px] scroller-display-none">
                     {food.food.description}
                   </p>
                   <div className="flex items-center justify-between w-full">

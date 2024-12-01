@@ -1,5 +1,5 @@
-import secureLocalStorage from "react-secure-storage";
-import { checkLocation } from "../api/userApi";
+// import secureLocalStorage from "react-secure-storage";
+// import { checkLocation } from "../api/userApi";
 
 const handlePermissionRequest = async () => {
   try {
@@ -19,19 +19,24 @@ const handlePermissionRequest = async () => {
       throw new Error("Unable to retrieve location. Please try again.");
     }
 
-    const isUser = secureLocalStorage.getItem("user");
+    // const isUser = secureLocalStorage.getItem("user");
 
     let userLocation;
 
-    if (isUser) {
-      userLocation = await checkLocation(latitude, longitude);
+    // console.log("Calling 1");
 
-      if (userLocation === "Error occured") {
-        throw new Error(userLocation);
-      }
+    // if (isUser) {
+    //   console.log("Calling 2");
+    //   userLocation = await checkLocation(18.9894, 73.1175);
 
-      return userLocation;
-    }
+    //   console.log("Userlocation = ", userLocation);
+
+    //   if (userLocation === "Error occured") {
+    //     throw new Error(userLocation);
+    //   }
+
+    //   return userLocation;
+    // }
 
     userLocation = {
       latitude,

@@ -37,15 +37,15 @@ const createPost = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Please fill all the fields"));
   }
 
-  const localFilePath = req?.file?.path;
+  const fileBuffer = req.file.buffer;
 
-  if (!localFilePath) {
+  if (!fileBuffer) {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Image is required"));
   }
 
-  const cloudinaryResonse = await uploadOnCloudinary(localFilePath);
+  const cloudinaryResonse = await uploadOnCloudinary(fileBuffer);
 
   if (!cloudinaryResonse) {
     return res
@@ -322,15 +322,15 @@ const updateFoodPost = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "All fields are required"));
   }
 
-  const localFilePath = req?.file?.path;
+  const fileBuffer = req?.file?.buffer;
 
-  if (!localFilePath) {
+  if (!fileBuffer) {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Image is required"));
   }
 
-  const cloudinaryResonse = await uploadOnCloudinary(localFilePath);
+  const cloudinaryResonse = await uploadOnCloudinary(fileBuffer);
 
   if (!cloudinaryResonse) {
     return res
@@ -383,6 +383,8 @@ const userPostsHistory = asyncHandler(async (req, res) => {
     )
     .select("status")
     .lean();
+
+  console.log(posts);
 
   if (!posts) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
@@ -439,18 +441,37 @@ const searchItem = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Please provide a search"));
   }
 
-  let searchData = await foodModel.find({
-    $or: [
-      {
-        foodTitle: { $regex: searchQuery, $options: "i" },
+  let searchData = await foodModel.aggregate([
+    {
+      $match: {
+        $or: [
+          {
+            foodTitle: { $regex: searchQuery, $options: "i" },
+          },
+          {
+            foodType: { $regex: `^${searchQuery}$`, $options: "i" },
+          },
+        ],
+        isDelete: false,
       },
-      {
-        foodType: { $regex: `^${searchQuery}$`, $options: "i" },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userData",
       },
-    ],
-  });
-
-  searchData = searchData.filter((item) => !item.isDelete);
+    },
+    {
+      $unwind: "$userData",
+    },
+    {
+      $match: {
+        "userData.username": req.user.username,
+      },
+    },
+  ]);
 
   if (!searchData || searchData.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));

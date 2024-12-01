@@ -7,6 +7,7 @@ import { setLocation, setPostData } from "../features/foodUnity";
 import { createFoodPost, getDonorPostedPosts } from "../api/foodApi";
 import { useNavigate } from "react-router-dom";
 import PageLoader from "./PageLoader";
+import { getuserLocationWhileRegister } from "../api/userApi";
 
 const CreateFoodPost = () => {
   const location = useSelector((state) => state.location);
@@ -29,7 +30,8 @@ const CreateFoodPost = () => {
   const getUserCurrentLocation = async () => {
     try {
       const res = await handlePermissionRequest();
-      dispatch(setLocation(res.data));
+      const locationData = await getuserLocationWhileRegister(res);
+      dispatch(setLocation(locationData.data));
     } catch (error) {
       toast.error(error.message);
     }
