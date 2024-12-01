@@ -2,10 +2,6 @@
 
 IMP Check first server.js for admin and frontend before start local server, project is deployed on server.
 
-0) Add Infinite scroller for showing posts for users,admin,donors.
-1) Add 2fa login for admin.
-2) Add payment gateway.
-
 Todos : - 
 
 IMP Todo: - Some configuration changes due to deployment.

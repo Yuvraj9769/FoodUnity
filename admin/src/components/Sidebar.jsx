@@ -30,6 +30,12 @@ const Sidebar = () => {
     }
   };
 
+  const setThemeMode = () => {
+    toggleDarkMode(!darkMode);
+    localStorage.setItem("food_theme_pref", !darkMode ? "dark" : "light");
+    setSidebarVisible(!isSidebarVisible);
+  };
+
   return (
     <aside
       className={`bg-gray-200 absolute md:relative md:left-0 md:top-0 overflow-hidden dark:bg-gray-900 w-64 md:max-w-64 2xl:w-[25%] 2xl:max-w-[600px] min-h-screen p-4 border-r transition-all duration-700 md:transition-none border-r-gray-500 ${
@@ -39,8 +45,13 @@ const Sidebar = () => {
       <ul className="space-y-2">
         <li
           onClick={() => setSidebarVisible(!isSidebarVisible)}
-          className="md:hidden text-red-600 inline-flex items-center justify-end w-full"
+          className="md:hidden text-red-600 inline-flex items-center justify-between w-full"
         >
+          <img
+            src="/logo/DarkLogo.jpeg"
+            alt="logoImage"
+            className="h-12 w-12 object-contain"
+          />
           <span className="text-2xl">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +160,7 @@ const Sidebar = () => {
         </li>
         <li
           className="flex items-center gap-4 bg-slate-900  text-center py-2 px-4 rounded-3xl border border-[#cfcfcf] cursor-pointer text-slate-50 text-lg hover:bg-slate-800 duration-500 max-w-[50%] md:w-auto md:max-w-full"
-          onClick={() => toggleDarkMode(!darkMode)}
+          onClick={setThemeMode}
         >
           {darkMode ? (
             <p className="inline-flex items-center gap-3 ">
