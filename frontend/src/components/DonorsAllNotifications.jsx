@@ -77,10 +77,10 @@ const DonorsAllNotifications = () => {
               {searchedData.map((notification, ind) => (
                 <div
                   key={ind}
-                  className="bg-white dark:bg-gray-800 shadow-md  rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
+                  className="bg-white dark:bg-gray-800 shadow-md  rounded-lg p-4 w-[90%] max-w-[370px] sm:max-w-[313px] flex flex-col items-start gap-2 sm:w-[313px]"
                 >
-                  <div className="flex items-center justify-between w-full mb-1">
-                    <h2 className="text-xl font-semibold text-black dark:text-slate-50">
+                  <div className="flex flex-col gap-2 w-full mb-1">
+                    <h2 className="text-xl font-semibold text-black dark:text-slate-50 text-nowrap overflow-hidden text-ellipsis w-full">
                       {notification.foodId.foodTitle}
                     </h2>
                     <p className="text-sm text-gray-500  dark:text-slate-400">
@@ -92,19 +92,21 @@ const DonorsAllNotifications = () => {
                     alt="Food Image"
                     className="w-full h-48 object-cover object-center mb-2 rounded-md"
                   />
-                  <p className="text-gray-600 mb-2 overflow-y-scroll h-[92px] dark:text-slate-50 scroller-display-none">
+                  <p className="text-gray-600 mb-2 overflow-y-scroll max-h-[92px] dark:text-slate-50 scroller-display-none">
                     {notification.foodId.description}
                   </p>
-                  <p className="text-gray-700 mb-1 dark:text-slate-50">
+                  <p className="text-gray-700 mb-1 dark:text-slate-50 w-full overflow-hidden text-nowrap text-ellipsis">
                     <b>Requested by: {notification.requesterId.username}</b>
                   </p>
 
-                  <div className="mt-2">
+                  <div className="mt-2 inline-flex items-center gap-2 w-full">
                     <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                       Location:
                     </span>
-                    <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
-                      {notification.foodId.pickupLocation}
+                    <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 max-w-[80%]">
+                      <p className="max-w-[80%] text-nowrap overflow-hidden text-ellipsis">
+                        {notification.foodId.pickupLocation}
+                      </p>
                       <MdLocationOn className="text-[22px] text-red-600" />
                     </span>
                   </div>
@@ -177,14 +179,14 @@ const DonorsAllNotifications = () => {
             <h1 className="text-3xl text-center sm:text-start font-bold mb-6 text-black dark:text-slate-50">
               Requests for Your Food Posts
             </h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-5 place-items-center gap-4">
               {notifications.map((notification, ind) => (
                 <div
                   key={ind}
-                  className="bg-white dark:bg-gray-800 shadow-md  rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
+                  className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 w-[90%] max-w-[370px] sm:max-w-[313px] flex flex-col items-start gap-2 sm:w-[313px]"
                 >
-                  <div className="flex items-center justify-between w-full mb-1">
-                    <h2 className="text-xl font-semibold text-black dark:text-slate-50">
+                  <div className="flex flex-col gap-2 w-full mb-1">
+                    <h2 className="text-xl font-semibold text-black dark:text-slate-50 text-nowrap overflow-hidden text-ellipsis w-full">
                       {notification.foodId.foodTitle}
                     </h2>
                     <p className="text-sm text-gray-500  dark:text-slate-400">
@@ -196,19 +198,21 @@ const DonorsAllNotifications = () => {
                     alt="Food Image"
                     className="w-full h-48 object-cover object-center mb-2 rounded-md"
                   />
-                  <p className="text-gray-600 mb-2 overflow-y-scroll h-[92px] dark:text-slate-50 scroller-display-none">
+                  <p className="text-gray-600 mb-2 overflow-y-scroll max-h-[92px] dark:text-slate-50 scroller-display-none">
                     {notification.foodId.description}
                   </p>
-                  <p className="text-gray-700 mb-1 dark:text-slate-50">
+                  <p className="text-gray-700 mb-1 dark:text-slate-50 w-full overflow-hidden text-nowrap text-ellipsis">
                     <b>Requested by: {notification.requesterId.username}</b>
                   </p>
 
-                  <div className="mt-2">
+                  <div className="mt-2 inline-flex items-center gap-2 w-full">
                     <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                       Location:
                     </span>
-                    <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
-                      {notification.foodId.pickupLocation}
+                    <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 max-w-[80%]">
+                      <p className="max-w-[80%] text-nowrap overflow-hidden text-ellipsis">
+                        {notification.foodId.pickupLocation}
+                      </p>
                       <MdLocationOn className="text-[22px] text-red-600" />
                     </span>
                   </div>

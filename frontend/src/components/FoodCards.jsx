@@ -102,7 +102,7 @@ const FoodCards = () => {
             {searchedData.length !== 0
               ? searchedData.map((e, ind) => (
                   <div
-                    className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800 min-w-[313px]"
+                    className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800 sm:min-w-[313px]"
                     key={ind}
                   >
                     <img
@@ -110,15 +110,15 @@ const FoodCards = () => {
                       alt="Food Image"
                       className="w-full h-48 object-cover object-center"
                     />
-                    <div className="px-6 py-4 h-[260px] flex flex-col items-start justify-between">
-                      <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
+                    <div className="px-6 py-4 h-[310px] flex flex-col items-start justify-between">
+                      <div className="font-bold text-xl mb-2 text-black dark:text-slate-50 text-nowrap overflow-hidden text-ellipsis w-full">
                         {e.foodTitle}
                       </div>
-                      <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll scroller-display-none scroll-smooth h-[92px]">
+                      <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll scroller-display-none scroll-smooth max-h-[92px]">
                         {e.description}
                       </p>
                       <div className="flex items-center justify-between w-full">
-                        <span className="text-sm font-semibold text-black dark:text-slate-50">
+                        <span className="text-sm font-semibold text-black dark:text-slate-50 w-[57%] overflow-hidden text-nowrap text-ellipsis">
                           Posted By: {e.contactName}
                         </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 inline-flex items-center gap-1">
@@ -141,13 +141,14 @@ const FoodCards = () => {
                           <FcAlarmClock className="text-xl" />
                         </span>
                       </div>
-
-                      <div className="mt-2">
+                      <div className="mt-2 inline-flex items-center gap-2 w-full">
                         <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                           Location:
                         </span>
-                        <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
-                          {e.pickupLocation}
+                        <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 max-w-[80%]">
+                          <p className="max-w-[80%] text-nowrap overflow-hidden text-ellipsis">
+                            {e.pickupLocation}
+                          </p>
                           <MdLocationOn className="text-[22px] text-red-600" />
                         </span>
                       </div>
@@ -208,7 +209,7 @@ const FoodCards = () => {
                 ))
               : postData.map((e, ind) => (
                   <div
-                    className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800 min-w-[313px]"
+                    className="max-w-sm rounded-lg my-2 sm:my-0 overflow-hidden shadow-lg shadow-gray-500 dark:shadow-slate-700 bg-white dark:bg-gray-800 sm:min-w-[313px]"
                     key={ind}
                   >
                     <img
@@ -216,15 +217,15 @@ const FoodCards = () => {
                       alt="Food Image"
                       className="w-full h-48 object-cover object-center"
                     />
-                    <div className="px-6 py-4 h-[260px] flex flex-col items-start justify-between">
-                      <div className="font-bold text-xl mb-2 text-black dark:text-slate-50">
+                    <div className="px-6 py-4 h-[310px] flex flex-col items-start justify-between">
+                      <div className="font-bold text-xl mb-2 text-black dark:text-slate-50 text-nowrap overflow-hidden text-ellipsis w-full">
                         {e.foodTitle}
                       </div>
                       <p className="text-gray-700 dark:text-gray-300 text-base mb-2 overflow-y-scroll scroller-display-none scroll-smooth max-h-[92px]">
                         {e.description}
                       </p>
                       <div className="flex items-center justify-between w-full">
-                        <span className="text-sm font-semibold text-black dark:text-slate-50">
+                        <span className="text-sm font-semibold text-black dark:text-slate-50 w-[57%] overflow-hidden text-nowrap text-ellipsis">
                           Posted By: {e.contactName}
                         </span>
                         <span className="text-sm text-gray-600 dark:text-gray-400 inline-flex items-center gap-1">
@@ -247,13 +248,14 @@ const FoodCards = () => {
                           <FcAlarmClock className="text-xl" />
                         </span>
                       </div>
-
-                      <div className="mt-2">
+                      <div className="mt-2 inline-flex items-center gap-2 w-full">
                         <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                           Location:
                         </span>
-                        <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
-                          {e.pickupLocation}
+                        <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 max-w-[80%]">
+                          <p className="max-w-[80%] text-nowrap overflow-hidden text-ellipsis">
+                            {e.pickupLocation}
+                          </p>
                           <MdLocationOn className="text-[22px] text-red-600" />
                         </span>
                       </div>

@@ -384,8 +384,6 @@ const userPostsHistory = asyncHandler(async (req, res) => {
     .select("status")
     .lean();
 
-  console.log(posts);
-
   if (!posts) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }

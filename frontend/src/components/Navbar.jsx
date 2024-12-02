@@ -16,6 +16,9 @@ import {
   setSidebarVisible,
   setPostData,
   setSearchedData,
+  setUserData,
+  setUserHistoryPosts,
+  setUserRequestPostsData,
 } from "../features/foodUnity";
 import { logoutUser } from "../api/userApi";
 import searchContext from "../store/searchContext";
@@ -51,6 +54,10 @@ const Navbar = ({ setIsJWTExpired }) => {
         } else if (secureLocalStorage.getItem("recipient")) {
           secureLocalStorage.removeItem("recipient");
         }
+        dispatch(setUserData([]));
+        dispatch(setUserHistoryPosts([]));
+        dispatch(setUserRequestPostsData([]));
+        dispatch(setSearchedData([]));
         setIsJWTExpired(true);
         navigate("/");
         toast.success(res.message);

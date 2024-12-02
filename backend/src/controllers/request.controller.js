@@ -86,19 +86,6 @@ const showNotifications = asyncHandler(async (req, res) => {
       .json(new ApiResponse(404, null, "Food Item not found"));
   }
 
-  // const notification = await notificationModel.create({
-  //   unameOfRecipient: user.username,
-  //   foodId: foodItem._id,
-  //   date: Date.now(),
-  // });
-
-  // if (!notification) {
-  //   return res.status(500).json(new ApiResponse(500, null, "Error Occured"));
-  // }
-
-  // user.notifications = notification._id;
-  // await user.save();
-
   const reqData = await requestModel.findOne({ foodId: fid, requesterId: uid });
 
   return res.status(200).json(

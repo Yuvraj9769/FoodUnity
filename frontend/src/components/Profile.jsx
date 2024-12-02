@@ -89,7 +89,7 @@ const Profile = ({ logout }) => {
               />
             ) : (
               <p className="dark:bg-gray-800 bg-transparent border border-gray-300 dark:border-none w-full h-full inline-flex items-center justify-center cursor-pointer rounded-full dark:text-slate-50 text-black font-semibold">
-                {userData.email.slice(0, 1).toUpperCase()}
+                {userData?.email?.slice(0, 1)?.toUpperCase()}
               </p>
             )}
           </div>

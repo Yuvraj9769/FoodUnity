@@ -170,7 +170,7 @@ function App() {
         setLoading(false);
       }
     }, 700);
-  }, []);
+  }, [isJWTExpired]);
 
   useEffect(() => {
     if (isJWTExpired) return;
@@ -202,11 +202,12 @@ function App() {
         })
         .catch((err) => {
           if (err.message !== "Please login first") {
+            setIsJWTExpired(true);
             toast.error(err.message);
           }
         });
     }
-  }, [isJWTExpired]); //Removed userData from dependency.
+  }, [isJWTExpired]);
 
   return (
     <div className="flex flex-col items-center gap-4 dark:bg-slate-950 bg-slate-50 h-full">

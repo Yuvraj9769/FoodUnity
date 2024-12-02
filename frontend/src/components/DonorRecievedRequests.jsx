@@ -31,7 +31,6 @@ const DonorRecievedRequests = () => {
   const acceptOrRejectRequest = async (status, cardInd, foodId) => {
     try {
       const email = requests[cardInd].email;
-      console.log(email);
       const data = {
         recipientEmail: email,
         reqStatus: status,
@@ -58,10 +57,10 @@ const DonorRecievedRequests = () => {
             {requests.map((request, ind) => (
               <div
                 key={ind}
-                className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 w-[90%] max-w-[346px] sm:w-auto flex flex-col items-start gap-2"
+                className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 w-[90%] max-w-[370px] sm:max-w-[313px] flex flex-col items-start gap-2 sm:w-[313px]"
               >
-                <div className="flex items-center justify-between w-full mb-1">
-                  <h2 className="text-xl font-semibold text-black dark:text-slate-50">
+                <div className="flex flex-col gap-2 w-full mb-1">
+                  <h2 className="text-xl font-semibold text-black dark:text-slate-50 text-nowrap overflow-hidden text-ellipsis w-full">
                     {request.foodTitle}
                   </h2>
                   <p className="text-sm text-gray-500">
@@ -73,19 +72,21 @@ const DonorRecievedRequests = () => {
                   alt="Food Image"
                   className="w-full h-48 object-cover object-center mb-2 rounded-md"
                 />
-                <p className="text-gray-600 mb-2 overflow-y-scroll h-[92px] scroller-display-none dark:text-slate-50">
+                <p className="text-gray-600 mb-2 overflow-y-scroll max-h-[92px] scroller-display-none dark:text-slate-50">
                   {request.foodDescription}
                 </p>
-                <p className="text-gray-700 mb-1 dark:text-slate-50">
+                <p className="text-gray-700 mb-1 dark:text-slate-50 w-full overflow-hidden text-nowrap text-ellipsis">
                   <b>Requested by: {request.uname}</b>
                 </p>
 
-                <div className="mt-2">
+                <div className="mt-2 inline-flex items-center gap-2 w-full">
                   <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                     Location:
                   </span>
-                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 ">
-                    {request.pickupLocation}
+                  <span className="text-sm text-gray-700 dark:text-gray-300 ml-1 inline-flex items-center gap-2 max-w-[80%]">
+                    <p className="max-w-[80%] text-nowrap overflow-hidden text-ellipsis">
+                      {request.pickupLocation}
+                    </p>
                     <MdLocationOn className="text-[22px] text-red-600" />
                   </span>
                 </div>

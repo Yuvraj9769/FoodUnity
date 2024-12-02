@@ -36,7 +36,7 @@ const uploadOnCloudinary = async (fileBuffer) => {
           fileBuffer = null;
 
           if (error) {
-            console.log("Error uploading to Cloudinary:", error);
+            // console.log("Error uploading to Cloudinary:", error);
             return reject(error);
           }
           // Resolve the promise with the result
@@ -69,7 +69,7 @@ const deleteOnCloudinary = async (publicId) => {
     const { result } = await uploadOnCloudinary.uploader.destroy(publicId); //return {result: "ok"}
     return result;
   } catch (error) {
-    console.log("Error while deleting image : ", error);
+    // console.log("Error while deleting image : ", error);
     return null;
   }
 };
