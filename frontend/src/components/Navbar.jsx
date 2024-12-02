@@ -59,6 +59,7 @@ const Navbar = ({ setIsJWTExpired }) => {
         dispatch(setUserRequestPostsData([]));
         dispatch(setSearchedData([]));
         setIsJWTExpired(true);
+        dispatch(setProfile(false));
         navigate("/");
         toast.success(res.message);
       } catch (error) {
