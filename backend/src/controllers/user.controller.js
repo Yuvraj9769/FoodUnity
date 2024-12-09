@@ -87,6 +87,12 @@ const registerUser = asyncHandler(async (req, res) => {
     },
   });
 
+  if (!user) {
+    return res
+      .status(500)
+      .json(new ApiResponse(500, null, "Registration failed"));
+  }
+
   const createdUser = await userModel
     .findById(user._id)
     .select("-password -passwordResetToken -passwordResetExpires");
@@ -270,6 +276,12 @@ const resetPassword = asyncHandler(async (req, res) => {
     return res.status(400).json(new ApiResponse(400, null, "Unauthorized"));
   }
 
+  if ([username, newPassword].some((field) => field.trim() === "")) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "All fields are required"));
+  }
+
   const user = await userModel.findOne({ username });
   if (!user) {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
@@ -330,7 +342,7 @@ const updateProfilePic = asyncHandler(async (req, res) => {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
 
-  // const response = await uploadOnCloudinary(req.file.path);
+  // const response = await uploadOnCloudinary(req.file.path);   //for local
 
   // Upload the image to Cloudinary using the buffer from memory
   const response = await uploadOnCloudinary(req.file.buffer);

@@ -1,4 +1,3 @@
-IMP 1) My request and request history correct it should show only for specific user.
 
 IMP Check first server.js for admin and frontend before start local server, project is deployed on server.
 

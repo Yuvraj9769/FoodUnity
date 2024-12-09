@@ -1,5 +1,18 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { setLogin, setSearchedData } from "../features/adminFeatures";
+import {
+  setAdminData,
+  setBarChartGraphData,
+  setDeletedPostsData,
+  setDonorsData,
+  setGraphData,
+  setLineChartGraphData,
+  setLogin,
+  setPostsData,
+  setRecipientsData,
+  setSearchDonorDeletedPosts,
+  setSearchedData,
+  setUsersData,
+} from "../features/adminFeatures";
 import { useDispatch, useSelector } from "react-redux";
 import { MdLogout } from "react-icons/md";
 import toast from "react-hot-toast";
@@ -26,6 +39,17 @@ const Sidebar = () => {
       } finally {
         navigate("/");
         dispatch(setLogin(false));
+        dispatch(setPostsData([]));
+        dispatch(setUsersData([]));
+        dispatch(setAdminData([]));
+        dispatch(setDonorsData([]));
+        dispatch(setRecipientsData([]));
+        dispatch(setSearchedData([]));
+        dispatch(setGraphData([{}, {}]));
+        dispatch(setLineChartGraphData([]));
+        dispatch(setBarChartGraphData([]));
+        dispatch(setDeletedPostsData([]));
+        dispatch(setSearchDonorDeletedPosts([]));
       }
     }
   };

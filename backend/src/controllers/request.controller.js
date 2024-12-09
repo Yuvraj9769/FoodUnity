@@ -34,11 +34,11 @@ const sendOrderMailRequest = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Request already exists"));
   }
 
-  // if (moment(foodPost.expiryTime).isBefore(moment())) {
-  //   return res
-  //     .status(400)
-  //     .json(new ApiResponse(400, null, "Food Post has been expired"));
-  // }
+  if (moment(foodPost.expiryTime).isBefore(moment())) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Food Post has been expired"));
+  }
 
   const newRequest = await requestModel.create({
     foodId: id,
@@ -46,6 +46,12 @@ const sendOrderMailRequest = asyncHandler(async (req, res) => {
     donorId: foodPost.userId,
     status: "requested",
   });
+
+  if (!newRequest) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Request not created"));
+  }
 
   const loginLink = `${process.env.FRONTEND_SERVER}foods/notifications/${req.user._id}/${foodPost._id}`;
 
@@ -60,12 +66,6 @@ const sendOrderMailRequest = asyncHandler(async (req, res) => {
   <p>Best regards,</p>
   <p><b>Food Unity Team</b></p>`
   );
-
-  if (!newRequest) {
-    return res
-      .status(400)
-      .json(new ApiResponse(400, null, "Request not created"));
-  }
 
   return res.status(200).json(new ApiResponse(200, null, "Request sent"));
 });
@@ -87,6 +87,10 @@ const showNotifications = asyncHandler(async (req, res) => {
   }
 
   const reqData = await requestModel.findOne({ foodId: fid, requesterId: uid });
+
+  if (!reqData) {
+    return res.status(404).json(new ApiResponse(404, null, "No request found"));
+  }
 
   return res.status(200).json(
     new ApiResponse(
@@ -130,7 +134,7 @@ const getDonorsAllNotifications = asyncHandler(async (req, res) => {
       select: "username email -_id",
     });
 
-  if (!notificationPosts) {
+  if (notificationPosts.length === 0) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "No Notifications Found"));
@@ -173,11 +177,11 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
     "MMMM D, YYYY hh:mm:ss A"
   );
 
-  // if (moment(foodData.expiryTime).isBefore(moment())) {
-  //   return res
-  //     .status(400)
-  //     .json(new ApiResponse(400, null, "Food Post has been expired"));
-  // }
+  if (moment(foodData.expiryTime).isBefore(moment())) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Food Post has been expired"));
+  }
 
   const requestData = await requestModel
     .findOne({
@@ -243,6 +247,12 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
       select: "username email -_id",
     });
 
+  if (notificationPosts.length === 0) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No notifications found"));
+  }
+
   let updatedNotifications = await Promise.all(
     notificationPosts
       .filter(
@@ -273,6 +283,12 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
         return item;
       })
   );
+
+  if (updatedNotifications.length === 0) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No notifications found"));
+  }
 
   updatedNotifications = updatedNotifications.filter(
     (item) => item.status !== "rejected"
@@ -332,7 +348,7 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
 const searchNotification = asyncHandler(async (req, res) => {
   const { searchQuery } = req.body;
 
-  if (!searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Please provide a search"));
@@ -368,11 +384,17 @@ const searchNotification = asyncHandler(async (req, res) => {
     })
     .populate("requesterId", "username");
 
+  if (searchData.length === 0) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No matching notifications found"));
+  }
+
   const filteredResults = searchData.filter(
     (item) => item.foodId !== null && !item.isDelete
   );
 
-  if (!filteredResults || filteredResults.length === 0) {
+  if (filteredResults.length === 0) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "Sorry post not found"));
@@ -384,7 +406,7 @@ const searchNotification = asyncHandler(async (req, res) => {
 const searchUserReqHistory = asyncHandler(async (req, res) => {
   const { searchQuery } = req.body;
 
-  if (!searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Please provide a search"));

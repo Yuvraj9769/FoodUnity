@@ -308,7 +308,7 @@ const getAllUserForAdmin = asyncHandler(async (req, res) => {
       "-password -notifications -pickupCoordinates -passwordResetToken -passwordResetExpires -locationCoordinates"
     );
 
-  if (users.length === 0 || !users) {
+  if (users.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No users found"));
   }
 
@@ -318,7 +318,7 @@ const getAllUserForAdmin = asyncHandler(async (req, res) => {
 const deleteUserAsAdminPrevilage = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  if (!id) {
+  if (!id || id.trim() === "") {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "User ID is required"));
@@ -339,7 +339,7 @@ const deleteUserAsAdminPrevilage = asyncHandler(async (req, res) => {
 
   const remainingUsers = await userModel.find();
 
-  if (!remainingUsers) {
+  if (remainingUsers.length === 0) {
     return res
       .status(404)
       .json(
@@ -420,7 +420,7 @@ const getAllFoodPostsForAdmin = asyncHandler(async (req, res) => {
     isDelete: false,
   });
 
-  if (!foods) {
+  if (foods.length === 0) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "No food posts found"));
@@ -432,7 +432,7 @@ const getAllFoodPostsForAdmin = asyncHandler(async (req, res) => {
 const getSearchedPost = asyncHandler(async (req, res) => {
   const { searchQuery } = req.body;
 
-  if (!searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Search query is required"));
@@ -448,7 +448,7 @@ const getSearchedPost = asyncHandler(async (req, res) => {
     ],
   });
 
-  if (foodPosts.length === 0 || !foodPosts) {
+  if (foodPosts.length === 0) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "No food posts found"));
@@ -460,7 +460,7 @@ const getSearchedPost = asyncHandler(async (req, res) => {
 const deletePostAsAdminPrevilage = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  if (!id) {
+  if (!id || id.trim() === "") {
     return res.status(400).json(new ApiResponse(400, null, "ID is required"));
   }
 
@@ -481,7 +481,7 @@ const deletePostAsAdminPrevilage = asyncHandler(async (req, res) => {
 
 const searchUserForAdmin = asyncHandler(async (req, res) => {
   const { searchQuery } = req.body;
-  if (!searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Search query is required"));
@@ -498,7 +498,7 @@ const searchUserForAdmin = asyncHandler(async (req, res) => {
       "-password -notifications -pickupCoordinates -passwordResetToken -passwordResetExpires -locationCoordinates"
     );
 
-  if (user.length === 0 || !user) {
+  if (user.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
 
@@ -510,7 +510,7 @@ const getAllDonorAndRecipients = asyncHandler(async (_, res) => {
   const recipient = await userModel.countDocuments({ role: "recipient" });
 
   if (donor.length === 0 && recipient.length === 0) {
-    return res.status(404).json(new ApiResponse(404, null, "No users found"));
+    return res.status(404).json(new ApiResponse(404, [], "No users found"));
   }
 
   const users = [
@@ -568,10 +568,10 @@ const getAllFoodPostsMonthWise = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (foodPosts.length === 0 || !foodPosts) {
+  if (foodPosts.length === 0) {
     return res
       .status(404)
-      .json(new ApiResponse(404, null, "No food posts found"));
+      .json(new ApiResponse(404, [], "No food posts found"));
   }
 
   return res.status(200).json(new ApiResponse(200, foodPosts, "OK"));
@@ -617,8 +617,8 @@ const getDeliveredPosts = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!posts) {
-    return res.status(404).json(new ApiResponse(404, null, "No posts found"));
+  if (posts.length === 0) {
+    return res.status(404).json(new ApiResponse(404, [], "No posts found"));
   }
 
   return res.status(200).json(new ApiResponse(200, posts, "OK"));
@@ -626,6 +626,12 @@ const getDeliveredPosts = asyncHandler(async (req, res) => {
 
 const requestPendingPosts = asyncHandler(async (req, res) => {
   const posts = await requestModel.find();
+
+  if (posts.length === 0) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "No requests found"));
+  }
 
   const requestPendingFoodPostsCounts = await foodModel.aggregate([
     {
@@ -675,10 +681,10 @@ const requestPendingPosts = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (posts.length === 0 || !posts) {
+  if (requestPendingFoodPostsCounts.length === 0) {
     return res
-      .status(404)
-      .json(new ApiResponse(404, null, "No pending posts found"));
+      .status(200)
+      .json(new ApiResponse(200, [], "No pending food posts."));
   }
 
   return res
@@ -713,7 +719,7 @@ const getDonorDeletedPosts = asyncHandler(async (req, res) => {
     isDelete: true,
   });
 
-  if (foodPosts.length === 0 || !foodPosts) {
+  if (foodPosts.length === 0) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "No deleted posts found"));
@@ -725,7 +731,7 @@ const getDonorDeletedPosts = asyncHandler(async (req, res) => {
 const searchDonorDeletedPosts = asyncHandler(async (req, res) => {
   const { searchQuery } = req.body;
 
-  if (!searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Search query is required"));
@@ -743,7 +749,7 @@ const searchDonorDeletedPosts = asyncHandler(async (req, res) => {
     ],
   });
 
-  if (searchDeletedPosts.length === 0 || !searchDeletedPosts) {
+  if (searchDeletedPosts.length === 0) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "No deleted posts found"));

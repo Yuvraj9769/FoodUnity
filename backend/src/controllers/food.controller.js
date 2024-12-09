@@ -109,7 +109,7 @@ const getDonorsAllPosts = asyncHandler(async (req, res) => {
     isDelete: false,
   });
 
-  if (!foodPosts) {
+  if (foodPosts.length === 0) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "No food posts found"));
@@ -128,12 +128,12 @@ const getAllFoodPosts = asyncHandler(async (req, res) => {
     status: {
       $nin: ["approved"],
     },
-    // expiryTime: {
-    //   $gte: new Date(),
-    // },
+    expiryTime: {
+      $gte: new Date(),
+    },
   });
 
-  if (foods.length === 0 || !foods) {
+  if (foods.length === 0) {
     return res
       .status(404)
       .json(new ApiResponse(404, null, "No food posts found"));
@@ -384,7 +384,7 @@ const userPostsHistory = asyncHandler(async (req, res) => {
     .select("status")
     .lean();
 
-  if (!posts) {
+  if (posts.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
@@ -408,9 +408,9 @@ const getUsersRequestPost = asyncHandler(async (req, res) => {
       "foodTitle description foodType expiryTime pickupLocation pickupOptions foodImage pickupTime contactName pickupOptions createdAt"
     )
     .select("status")
-    .lean();
+    .lean(); // plain JavaScript objects instead of Mongoose documents.
 
-  if (!requestData) {
+  if (requestData.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
@@ -423,7 +423,7 @@ const getUsersRequestPost = asyncHandler(async (req, res) => {
     })
     .filter((e) => e.status === "requested");
 
-  if (!postData || postData.length === 0) {
+  if (postData.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
@@ -433,7 +433,7 @@ const getUsersRequestPost = asyncHandler(async (req, res) => {
 const searchItem = asyncHandler(async (req, res) => {
   const { searchQuery } = req.body;
 
-  if (!searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Please provide a search"));
@@ -471,7 +471,7 @@ const searchItem = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!searchData || searchData.length === 0) {
+  if (searchData.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
@@ -481,7 +481,7 @@ const searchItem = asyncHandler(async (req, res) => {
 const searchPostForUser = asyncHandler(async (req, res) => {
   const { searchQuery } = req.body;
 
-  if (!searchQuery) {
+  if (!searchQuery || searchQuery.trim() === "") {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Please provide a search"));
@@ -491,6 +491,9 @@ const searchPostForUser = asyncHandler(async (req, res) => {
     $and: [
       {
         isDelete: false,
+        expiryTime: {
+          $gte: new Date(),
+        },
       },
       {
         $or: [
@@ -603,7 +606,7 @@ const getFifteenKMPosts = asyncHandler(async (req, res) => {
     requesterId: req.user._id,
   });
 
-  if (requestedUserData.length === 0 || !requestedUserData) {
+  if (requestedUserData.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
@@ -627,7 +630,7 @@ const getFifteenKMPosts = asyncHandler(async (req, res) => {
     })
     .select("-pickupCoordinates");
 
-  if (nearbyPosts.length === 0 || !nearbyPosts) {
+  if (nearbyPosts.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
@@ -648,10 +651,7 @@ const getFifteenKMPosts = asyncHandler(async (req, res) => {
     return objData;
   });
 
-  if (
-    newFilteredPostsWithRequestStatus.length === 0 ||
-    !newFilteredPostsWithRequestStatus
-  ) {
+  if (newFilteredPostsWithRequestStatus.length === 0) {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
