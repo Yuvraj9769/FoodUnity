@@ -69,7 +69,6 @@ const deleteOnCloudinary = async (publicId) => {
     const { result } = await uploadOnCloudinary.uploader.destroy(publicId); //return {result: "ok"}
     return result;
   } catch (error) {
-    // console.log("Error while deleting image : ", error);
     return null;
   }
 };
