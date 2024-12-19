@@ -344,6 +344,12 @@ const updateProfilePic = asyncHandler(async (req, res) => {
 
   // const response = await uploadOnCloudinary(req.file.path);   //for local
 
+  if (!req?.file) {
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "Please select a image"));
+  }
+
   // Upload the image to Cloudinary using the buffer from memory
   const response = await uploadOnCloudinary(req.file.buffer);
 

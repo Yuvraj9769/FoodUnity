@@ -194,8 +194,8 @@ const Navbar = ({ setIsJWTExpired }) => {
                     userData?.profilePic ? (
                       <img
                         src={userData.profilePic}
-                        alt="User Profile"
-                        className="w-full h-full cursor-pointer object-cover"
+                        alt="Profile"
+                        className="w-full h-full cursor-pointer object-cover text-base text-center"
                       />
                     ) : (
                       <p className="dark:bg-gray-800 bg-transparent border border-gray-300 dark:border-none w-full h-full inline-flex items-center justify-center cursor-pointer rounded-full dark:text-slate-50 text-black font-semibold">

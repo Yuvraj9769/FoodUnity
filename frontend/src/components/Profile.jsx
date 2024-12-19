@@ -58,13 +58,12 @@ const Profile = ({ logout }) => {
         dispatch(getUserData());
         toast.success(response.data.message);
       }
-
-      setLoader(false);
     } catch (error) {
-      setLoader(false);
       const errorMessage =
         error?.response?.data?.message || "An error occurred";
       toast.error(errorMessage);
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -85,7 +84,7 @@ const Profile = ({ logout }) => {
                 src={userData.profilePic}
                 onClick={changeProfilePic}
                 alt="User Profile"
-                className="w-full h-full cursor-pointer object-cover"
+                className="w-full h-full cursor-pointer object-cover text-xl text-center"
               />
             ) : (
               <p className="dark:bg-gray-800 bg-transparent border border-gray-300 dark:border-none w-full h-full inline-flex items-center justify-center cursor-pointer rounded-full dark:text-slate-50 text-black font-semibold">
