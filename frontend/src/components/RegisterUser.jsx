@@ -12,6 +12,7 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import handlePermissionRequest from "../utils/getUserLocation";
 import { setLocation } from "../features/foodUnity";
 import { useDispatch, useSelector } from "react-redux";
+import { ImSpinner3 } from "react-icons/im";
 
 const RegisterUser = () => {
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ const RegisterUser = () => {
   const userType = useRef("");
 
   const dispatch = useDispatch();
+
+  const [locationLoader, setLocationLoader] = useState(false);
 
   const [disPassword, setDispassword] = useState({
     password: false,
@@ -41,12 +44,15 @@ const RegisterUser = () => {
 
   const getUserCurrentLocation = async () => {
     try {
+      setLocationLoader(true);
       const res = await handlePermissionRequest();
       const locationData = await getuserLocationWhileRegister(res);
       dispatch(setLocation(locationData.data));
       setLocationPoints(res);
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLocationLoader(false);
     }
   };
 
@@ -146,7 +152,7 @@ const RegisterUser = () => {
       <h1 className="text-slate-50 text-4xl font-semibold bg-gradient-to-r from-[#4A57CE] to-[#B151C2] bg-clip-text text-transparent py-2">
         User Registration
       </h1>
-      {loading ? (
+      {!loading ? (
         <Loader />
       ) : (
         <form
@@ -230,9 +236,10 @@ const RegisterUser = () => {
               <button
                 type="button"
                 onClick={getUserCurrentLocation}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md focus:outline-none"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md focus:outline-none inline-flex items-center justify-center gap-4"
               >
-                Get Current Location
+                {locationLoader && <ImSpinner3 className="animate-spin" />} Get
+                Current Location
               </button>
             )}
           </div>

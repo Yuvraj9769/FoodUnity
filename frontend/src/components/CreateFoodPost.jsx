@@ -8,6 +8,7 @@ import { createFoodPost, getDonorPostedPosts } from "../api/foodApi";
 import { useNavigate } from "react-router-dom";
 import PageLoader from "./PageLoader";
 import { getuserLocationWhileRegister } from "../api/userApi";
+import { ImSpinner3 } from "react-icons/im";
 
 const CreateFoodPost = () => {
   const location = useSelector((state) => state.location);
@@ -23,17 +24,22 @@ const CreateFoodPost = () => {
   const desc = useRef("");
   const number = useRef("");
 
+  const [locationLoader, setLocationLoader] = useState(false);
+
   const [loader, setLoader] = useState(false);
 
   const navigate = useNavigate();
 
   const getUserCurrentLocation = async () => {
     try {
+      setLocationLoader(true);
       const res = await handlePermissionRequest();
       const locationData = await getuserLocationWhileRegister(res);
       dispatch(setLocation(locationData.data));
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLocationLoader(false);
     }
   };
 
@@ -181,9 +187,10 @@ const CreateFoodPost = () => {
               <button
                 type="button"
                 onClick={getUserCurrentLocation}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md focus:outline-none"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md focus:outline-none inline-flex items-center justify-center gap-4"
               >
-                Get Current Location
+                {locationLoader && <ImSpinner3 className="animate-spin" />} Get
+                Current Location
               </button>
             )}
           </div>
