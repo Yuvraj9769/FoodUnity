@@ -152,7 +152,7 @@ const RegisterUser = () => {
       <h1 className="text-slate-50 text-4xl font-semibold bg-gradient-to-r from-[#4A57CE] to-[#B151C2] bg-clip-text text-transparent py-2">
         User Registration
       </h1>
-      {!loading ? (
+      {loading ? (
         <Loader />
       ) : (
         <form
