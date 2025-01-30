@@ -24,20 +24,20 @@ const LoginOrSignupForm = () => {
   const getLoginData = async (e) => {
     e.preventDefault();
 
+    setDataProcessing(true);
+
     const enteredUsername = username.current.value.trim();
     const enteredPassword = password.current.value.trim();
 
-    if (enteredUsername.trim() === "") {
+    if (enteredUsername === "") {
       toast.error("Username is required");
       return;
     }
 
-    if (enteredPassword.trim() === "") {
+    if (enteredPassword === "") {
       toast.error("Password is required");
       return;
     }
-
-    setDataProcessing(true);
 
     const data = {
       username: enteredUsername,
