@@ -1,9 +1,10 @@
+import moment from "moment";
+
 const getClockTime = (time) => {
-  const [hour, minute] = time.split(":");
-  let hourInt = parseInt(hour, 10); //converts the string hour into an integer using the decimal (base-10) numeral system.
-  const ampm = hourInt >= 12 ? "PM" : "AM";
-  hourInt = hourInt % 12 || 12;
-  return `${hourInt}:${minute} ${ampm}`;
+  // Parse the time as UTC and then format it to 12-hour clock with AM/PM
+  const formattedTime = moment(time).utc().format("hh:mm A");
+
+  return formattedTime; // Return the formatted time string
 };
 
 export default getClockTime;

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const getISTTime = require("../utils/getISTTime");
 
 const userSchema = new mongoose.Schema(
   {
@@ -105,7 +106,11 @@ userSchema.methods.generatePasswordResetToken = async function () {
       type: "url-safe",
     });
 
-    user.passwordResetExpires = Date.now() + 5 * 60 * 1000; // for 5 minutes
+    const currentISTTime = getISTTime();
+
+    user.passwordResetExpires = new Date(
+      currentISTTime.getTime() + 5 * 60 * 1000
+    ); // for 5 minutes
     await user.save();
     return user.passwordResetToken;
   }

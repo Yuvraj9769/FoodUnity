@@ -7,6 +7,7 @@ const sendMail = require("../utils/sendMail");
 const userModel = require("../models/user.model");
 const requestModel = require("../models/request.model");
 const foodModel = require("../models/food.model");
+const getISTTime = require("../utils/getISTTime");
 
 const checkIsAdminLogin = asyncHandler(async (req, res) => {
   const admin = await adminModel.findById(req.user.id);
@@ -174,9 +175,11 @@ const resetPasswordSendMail = asyncHandler(async (req, res) => {
     return res.status(404).json(new ApiResponse(404, null, "Admin not found"));
   }
 
+  const currentISTTime = getISTTime();
+
   if (
     admin?.passwordResetToken &&
-    moment(admin?.passwordResetExpires).isSameOrAfter(moment())
+    admin?.passwordResetExpires >= currentISTTime
   ) {
     return res
       .status(409)
@@ -205,7 +208,9 @@ const resetPasswordSendMail = asyncHandler(async (req, res) => {
   );
 
   admin.passwordResetToken = passwordResetToken;
-  admin.passwordResetExpires = new Date(Date.now() + 15 * 60 * 1000);
+  admin.passwordResetExpires = new Date(
+    currentISTTime.getTime() + 15 * 60 * 1000
+  );
   await admin.save();
 
   return res
@@ -236,7 +241,9 @@ const checkAdminTokenExipry = asyncHandler(async (req, res) => {
       );
   }
 
-  if (moment(admin.passwordResetExpires).isSameOrBefore(moment())) {
+  const currentISTTime = getISTTime();
+
+  if (currentISTTime > admin.passwordResetExpires) {
     admin.passwordResetToken = undefined;
     admin.passwordResetExpires = undefined;
     await admin.save();
@@ -277,7 +284,9 @@ const resetAdminPassword = asyncHandler(async (req, res) => {
       );
   }
 
-  if (moment(admin.passwordResetExpires).isSameOrBefore(moment())) {
+  const currentISTTime = getISTTime();
+
+  if (currentISTTime > admin.passwordResetExpires) {
     return res.status(401).json(new ApiResponse(401, null, "Link expired"));
   }
 
@@ -412,10 +421,6 @@ const updateUserDataAsAdminPrivilage = asyncHandler(async (req, res) => {
 });
 
 const getAllFoodPostsForAdmin = asyncHandler(async (req, res) => {
-  // console.log(req.params);
-
-  // const { page = 1, limit = 10 } = req.params;
-
   const foods = await foodModel.find({
     isDelete: false,
   });

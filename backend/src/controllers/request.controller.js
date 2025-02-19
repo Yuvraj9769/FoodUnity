@@ -5,8 +5,9 @@ const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const sendMail = require("../utils/sendMail");
 const otpGenerator = require("otp-generator");
-
+const moment2 = require("moment-timezone");
 const moment = require("moment");
+const getISTTime = require("../utils/getISTTime");
 
 const sendOrderMailRequest = asyncHandler(async (req, res) => {
   const { id } = req.body;
@@ -173,11 +174,13 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
       .json(new ApiResponse(404, null, "Food Post Not Found"));
   }
 
-  const foodOTPExpiryTime = moment(foodData.expiryTime).format(
-    "MMMM D, YYYY hh:mm:ss A"
-  );
+  const formattedTime = moment2
+    .utc(foodData.expiryTime) // Keep it in UTC
+    .format("dddd, MMMM D, YYYY hh:mm:ss A"); // Format with "UTC" label
 
-  if (moment(foodData.expiryTime).isBefore(moment())) {
+  const currentISTTime = getISTTime();
+
+  if (foodData.expiryTime <= currentISTTime) {
     return res
       .status(400)
       .json(new ApiResponse(400, null, "Food Post has been expired"));
@@ -315,7 +318,7 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
       `<p>Hello <b>${recipient.username}</b>,</p>
       <p>We wanted to inform you that your food request has been <b>${reqFinalStatus.toLowerCase()}</b> by donor <b>${username}.</b></p>
       <p>Your OTP for verification is: <b>${otp}</b></p>
-      <p><strong>⚠️ Important Notice:</strong> Your OTP is valid until <span style="color: #e60000; font-weight: bold;">${foodOTPExpiryTime}</span>. <br/> Please use it before this time to ensure it's accepted.</p>
+      <p><strong>⚠️ Important Notice:</strong> Your OTP is valid until <span style="color: #e60000; font-weight: bold;">${formattedTime}</span>. <br/> Please use it before this time to ensure it's accepted.</p>
       <p>You can view the location of the donor using the following link: <a href="https://www.google.com/maps?q=${
         requestData.donorId.pickupCoordinates.coordinates[0]
       },${
@@ -342,7 +345,9 @@ const sendRequestResponseMail = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedNotifications, "Request Status Update"));
+    .json(
+      new ApiResponse(200, updatedNotifications || [], "Request Status Update")
+    );
 });
 
 const searchNotification = asyncHandler(async (req, res) => {

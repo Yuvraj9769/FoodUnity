@@ -4,6 +4,7 @@ const userModel = require("../models/user.model");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
+const getISTTime = require("../utils/getISTTime");
 const sendMail = require("../utils/sendMail");
 const moment = require("moment");
 
@@ -123,13 +124,15 @@ const getDonorsAllPosts = asyncHandler(async (req, res) => {
 const getAllFoodPosts = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
+  const currentISTTime = getISTTime();
+
   const foods = await foodModel.find({
     isDelete: false,
     status: {
       $nin: ["approved"],
     },
     expiryTime: {
-      $gte: new Date(),
+      $gte: currentISTTime,
     },
   });
 
@@ -203,10 +206,9 @@ const verifyUserOTP = asyncHandler(async (req, res) => {
     return res.status(404).json(new ApiResponse(404, null, "No request found"));
   }
 
-  const currTime = moment();
-  const foodOTPExpiryTime = moment(foodData.expiryTime);
+  const currentISTTime = getISTTime();
 
-  if (currTime.isAfter(foodOTPExpiryTime)) {
+  if (currentISTTime >= foodData.expiryTime) {
     foodData.verifyOTP = undefined;
     await foodData.save({
       validateBeforeSave: false,
@@ -487,12 +489,14 @@ const searchPostForUser = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "Please provide a search"));
   }
 
+  const currentISTTime = getISTTime();
+
   let foodPosts = await foodModel.find({
     $and: [
       {
         isDelete: false,
         expiryTime: {
-          $gte: new Date(),
+          $gte: currentISTTime,
         },
       },
       {
@@ -634,21 +638,27 @@ const getFifteenKMPosts = asyncHandler(async (req, res) => {
     return res.status(404).json(new ApiResponse(404, null, "No posts found"));
   }
 
-  const newFilteredPostsWithRequestStatus = nearbyPosts.map((e) => {
+  const currentISTTime = getISTTime();
+
+  const filteredNearbyPosts = nearbyPosts.filter((e) => {
+    const expiryDate = new Date(e.expiryTime);
+    return expiryDate >= currentISTTime && e.status != "delivered";
+  });
+
+  const newFilteredPostsWithRequestStatus = filteredNearbyPosts.map((e) => {
     const sampleData = requestedUserData.filter((e2) => {
       return (
         e2.foodId.toString() === e._id.toString() &&
         e2.status !== "rejected" &&
-        e2.status !== "OTP Expired"
+        e2.status !== "OTP Expired" &&
+        e2.status !== "approved"
       );
     });
 
-    const objData = {
+    return {
       requestStatus: sampleData[0]?.status || "request",
       food: e,
     };
-
-    return objData;
   });
 
   if (newFilteredPostsWithRequestStatus.length === 0) {

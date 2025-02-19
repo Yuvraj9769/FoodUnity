@@ -2,6 +2,7 @@ const userModel = require("../models/user.model");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
+const getISTTime = require("../utils/getISTTime");
 const sendMail = require("../utils/sendMail");
 const sendPasswordResetMail = require("../utils/sendMail");
 const axios = require("axios");
@@ -259,7 +260,9 @@ const checkTokenExipry = asyncHandler(async (req, res) => {
       );
   }
 
-  if (moment(userWithToken.passwordResetExpires).isSameOrAfter(moment())) {
+  const currentISTTime = getISTTime();
+
+  if (userWithToken.passwordResetExpires >= currentISTTime) {
     return res.status(200).json(new ApiResponse(200, null, "Ok"));
   }
 
@@ -283,10 +286,14 @@ const resetPassword = asyncHandler(async (req, res) => {
   }
 
   const user = await userModel.findOne({ username });
+
   if (!user) {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
-  if (moment(user.passwordResetExpires).isBefore(moment())) {
+
+  const currentISTTime = getISTTime();
+
+  if (user.passwordResetExpires <= currentISTTime) {
     return res.status(401).json(new ApiResponse(401, null, "Link expired"));
   }
 

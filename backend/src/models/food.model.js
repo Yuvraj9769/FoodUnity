@@ -21,7 +21,7 @@ const foodSchema = new mongoose.Schema(
       required: true,
     },
     expiryTime: {
-      type: String,
+      type: Date,
       required: true,
     },
     pickupLocation: {
